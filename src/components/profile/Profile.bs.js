@@ -18,6 +18,7 @@ var leftParent = {
   background: "linear-gradient(180deg, #00d2ff, #3a7bd5)",
   display: "flex",
   height: "calc(100vh - 20px)",
+  position: "relative",
   width: "30%",
   borderRadius: "50px",
   alignItems: "center",
@@ -53,8 +54,10 @@ var inputWrapper = {
   display: "flex",
   height: "95px",
   marginLeft: "10px",
+  position: "relative",
   opacity: "0",
   flexDirection: "column",
+  justifyContent: "center",
   transition: "0.3s ease-out all",
   transitionDelay: "0.5s"
 };
@@ -69,15 +72,18 @@ var input = {
 };
 
 var line = {
-  backgroundColor: "black",
+  background: "linear-gradient(90deg, #3a7bd5, #00d2ff)",
+  bottom: "4px",
   height: "4px",
+  position: "absolute",
   width: "0",
+  borderRadius: "5px",
   transition: "0.3s ease-out all",
   transitionDelay: "0.5s"
 };
 
 var enterBtn = {
-  background: "linear-gradient(00deg, #00d2ff, #3a7bd5)",
+  background: "linear-gradient(0deg, #00d2ff, #3a7bd5)",
   bottom: "10px",
   cursor: "pointer",
   height: "70px",
@@ -144,6 +150,21 @@ var avatarWrapper = {
   transition: "0.3s ease-out all"
 };
 
+var logoWrapper = {
+  display: "flex",
+  left: "20px",
+  position: "absolute",
+  top: "20px",
+  justifyContent: "center"
+};
+
+var logoText = {
+  color: "#fff",
+  fontSize: "25px",
+  fontWeight: "600",
+  marginLeft: "10px"
+};
+
 var Style = {
   parent: parent,
   leftParent: leftParent,
@@ -163,7 +184,9 @@ var Style = {
   avatarSelected: avatarSelected,
   avatarImg: avatarImg,
   avatarWrapperActive: avatarWrapperActive,
-  avatarWrapper: avatarWrapper
+  avatarWrapper: avatarWrapper,
+  logoWrapper: logoWrapper,
+  logoText: logoText
 };
 
 function Profile$LeftSection(Props) {
@@ -171,7 +194,14 @@ function Profile$LeftSection(Props) {
               style: leftParent
             }, React.createElement("div", {
                   style: description
-                }, Ru$Yap.s("let's talk")));
+                }, Ru$Yap.s("let's talk")), React.createElement("div", {
+                  style: logoWrapper
+                }, React.createElement("img", {
+                      src: "../../assets/logo.svg",
+                      width: "50px"
+                    }), React.createElement("div", {
+                      style: logoText
+                    }, Ru$Yap.s("yap !!"))));
 }
 
 var LeftSection = {

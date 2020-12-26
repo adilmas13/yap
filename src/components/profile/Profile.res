@@ -9,6 +9,7 @@ module Style = {
     ~background="linear-gradient(180deg, #00d2ff, #3a7bd5)",
     ~justifyContent="center",
     ~alignItems="center",
+    ~position="relative",
     (),
   )
   let description = make(~fontSize="40px", ~color="white", ~fontWeight="600", ())
@@ -25,7 +26,9 @@ module Style = {
   let text1 = make(~fontSize="4rem", ~transition="0.3s ease-out all", ())
   let centerWrapper = make(~display="flex", ())
   let inputWrapper = make(
+  ~position="relative",
     ~display="flex",
+~justifyContent="center",
     ~flexDirection="column",
     ~marginLeft="10px",
     ~opacity="0",
@@ -46,14 +49,17 @@ module Style = {
   let line = make(
     ~width="0",
     ~height="4px",
-    ~backgroundColor="black",
+      ~background="linear-gradient(90deg, #3a7bd5, #00d2ff)",
     ~transition="0.3s ease-out all",
     ~transitionDelay="0.5s",
+    ~position="absolute",
+    ~bottom="4px",
+    ~borderRadius="5px",
     (),
   )
   let enterBtn = make(
     ~borderRadius="50%",
-    ~background="linear-gradient(00deg, #00d2ff, #3a7bd5)",
+    ~background="linear-gradient(0deg, #00d2ff, #3a7bd5)",
     ~height="70px",
     ~width="70px",
     ~bottom="10px",
@@ -106,13 +112,23 @@ module Style = {
 
   let avatarWrapperActive = make(~opacity="1", ())
   let avatarWrapper = make(~opacity="0", ~transition="0.3s ease-out all", ())
+
+  let logoWrapper = make(~display="flex", ~position="absolute", ~top="20px", ~left="20px", ~justifyContent="center", ())
+
+  let logoText=make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
 }
 
 module LeftSection = {
   @react.component
   let make = () => {
     open Style
-    <div style={leftParent}> <div style={description}> {"let's talk"->Ru.s} </div> </div>
+    <div style={leftParent}>
+     <div style={description}> {"let's talk"->Ru.s} </div>
+     <div style={logoWrapper}>
+        <img src="../../assets/logo.svg" width="50px"/>
+        <div style={logoText}>{"yap !!"-> Ru.s}</div>
+     </div>
+     </div>
   }
 }
 
