@@ -84,12 +84,12 @@ var line = {
 
 var enterBtn = {
   background: "linear-gradient(0deg, #00d2ff, #3a7bd5)",
-  bottom: "10px",
+  bottom: "20px",
   cursor: "pointer",
   height: "70px",
   padding: "20px",
   position: "absolute",
-  right: "10px",
+  right: "20px",
   width: "70px",
   opacity: "0",
   borderRadius: "50%",
