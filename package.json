@@ -2,7 +2,7 @@
   "name": "yap",
   "version": "0.1.0",
   "scripts": {
-    "build": "bsb -make-world",
+    "build": "npm run clean && bsb -make-world && webpack --config webpack.config.js --env production",
     "start": "bsb -make-world -w -ws _ ",
     "clean": "bsb -clean-world",
     "server": "webpack serve",
