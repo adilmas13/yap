@@ -14,11 +14,12 @@ module Style = {
   let description = make(~fontSize="40px", ~color="white", ~fontWeight="600", ())
   let rightParent = make(
     ~display="flex",
-    ~alignItems="center",
+    ~flexDirection="column",
     ~paddingLeft="20px",
     ~position="relative",
     ~height="100vh",
     ~width="100%",
+    ~justifyContent="center",
     (),
   )
   let text1 = make(~fontSize="4rem", ~transition="0.3s ease-out all", ())
@@ -67,6 +68,21 @@ module Style = {
   )
 
   let enterBtnActive = make(~transform="scale(1) rotate(180deg)", ~pointerEvents="all", ~opacity="1", ())
+
+  let avatarParent = make(~display="flex", ~flexDirection="column", ())
+
+  let avatarTitle = make(~fontSize="4rem", ())
+
+  let avatarList = make(~display="grid", ~gridTemplateColumns="auto auto auto auto auto", ~justifyContent="flex-start", ~gridGap="20px", ~paddingLeft="50px", ())
+
+  let avatarItem = make(~display="flex",~width="100px", ~height="100px", ~borderRadius="10px", ~alignItems="center", ~justifyContent="center",
+~cursor="pointer",
+    ~transition="0.3s ease-out all",
+    ~border="2px solid transparent",
+  ())
+
+  let avatarSelected = make(~border="2px solid #3a7bd5", ())
+  let avatarImg = make(~width="70px", ())
 }
 
 module LeftSection = {
@@ -77,15 +93,56 @@ module LeftSection = {
   }
 }
 
+module AvatarItem = {
+    open Style
+    @react.component
+    let make = (~avatar: string, ~isSelected: bool, ~onSelected: (unit) => unit) => {
+        let avatarStyle = {
+            if(isSelected){
+                ReactDOMRe.Style.combine(Style.avatarItem, Style.avatarSelected)
+            }else{
+                Style.avatarItem
+            }
+        }
+        <div style={avatarStyle} onClick={_ => onSelected()}>
+        <img src={avatar} style={avatarImg}/>
+        </div>
+    }
+}
+
+module Avatar = {
+    open Style
+    @react.component
+    let make = (~selectAvatar, ~selectedAvatar) => {
+        <div style={avatarParent}>
+            <div style={avatarTitle}>{"> select an avatar" -> Ru.s}</div>
+            <div style={avatarList}>
+                {AvatarCollection.avatars -> Ru.mapi((index, avatar) =>
+                <AvatarItem
+                key={index->string_of_int}
+                avatar
+                isSelected={selectedAvatar === index}
+                onSelected={_ => {
+                    Js.log2("HERE", index)
+                    selectAvatar(_ => index)
+                }}
+                />
+          )}
+            </div>
+        </div>
+    }
+}
+
 module RightSection = {
   @react.component
   let make = () => {
     let (title, setTitle) = React.useState(() => "")
     let (name, setName) = React.useState(() => "")
+    let (selectedAvatar, selectAvatar) = React.useState(() => -1)
     let (isInputVisible, setInputVisible) = React.useState(() => false)
 
     React.useEffect1(() => {
-      let text = "my name is"
+      let text = "> my name is"
 
       text
       ->Js.String2.split("")
@@ -118,9 +175,10 @@ module RightSection = {
     }
 
     let enterBtnStyle = {
-      switch name->Js.String2.length {
-      | 0 => Style.enterBtn
-      | _ => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
+      switch (name->Js.String2.length, selectedAvatar > -1){
+      | (0, _)
+      | (_, false) => Style.enterBtn
+      | (_, true) => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
       }
     }
 
@@ -131,6 +189,11 @@ module RightSection = {
       setName(_ => value)
     }
 
+    let onClick = (e: ReactEvent.Mouse.t): unit => {
+          e->ReactEvent.Mouse.stopPropagation
+          UserDetails.saveUsername(name)
+        }
+
     open Style
     <div style={rightParent}>
       <div style={centerWrapper}>
@@ -140,7 +203,8 @@ module RightSection = {
           <div style={lineStyle} />
         </div>
       </div>
-      <div style={enterBtnStyle}> <img src="../../assets/arrow.svg" /> </div>
+      <Avatar selectAvatar selectedAvatar/>
+      <div style={enterBtnStyle} onClick> <img src="../../assets/arrow.svg" /> </div>
     </div>
   }
 }

@@ -2,8 +2,10 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
-var Ru$Yap = require("../utils/ru.bs.js");
+var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var UserDetails$Yap = require("../../data/userDetails.bs.js");
+var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
 var parent = {
   display: "flex",
@@ -34,7 +36,8 @@ var rightParent = {
   paddingLeft: "20px",
   position: "relative",
   width: "100%",
-  alignItems: "center"
+  flexDirection: "column",
+  justifyContent: "center"
 };
 
 var text1 = {
@@ -94,6 +97,43 @@ var enterBtnActive = {
   pointerEvents: "all"
 };
 
+var avatarParent = {
+  display: "flex",
+  flexDirection: "column"
+};
+
+var avatarTitle = {
+  fontSize: "4rem"
+};
+
+var avatarList = {
+  display: "grid",
+  paddingLeft: "50px",
+  justifyContent: "flex-start",
+  gridGap: "20px",
+  gridTemplateColumns: "auto auto auto auto auto"
+};
+
+var avatarItem = {
+  border: "2px solid transparent",
+  cursor: "pointer",
+  display: "flex",
+  height: "100px",
+  width: "100px",
+  borderRadius: "10px",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "0.3s ease-out all"
+};
+
+var avatarSelected = {
+  border: "2px solid #3a7bd5"
+};
+
+var avatarImg = {
+  width: "70px"
+};
+
 var Style = {
   parent: parent,
   leftParent: leftParent,
@@ -105,7 +145,13 @@ var Style = {
   input: input,
   line: line,
   enterBtn: enterBtn,
-  enterBtnActive: enterBtnActive
+  enterBtnActive: enterBtnActive,
+  avatarParent: avatarParent,
+  avatarTitle: avatarTitle,
+  avatarList: avatarList,
+  avatarItem: avatarItem,
+  avatarSelected: avatarSelected,
+  avatarImg: avatarImg
 };
 
 function Profile$LeftSection(Props) {
@@ -120,6 +166,54 @@ var LeftSection = {
   make: Profile$LeftSection
 };
 
+function Profile$AvatarItem(Props) {
+  var avatar = Props.avatar;
+  var isSelected = Props.isSelected;
+  var onSelected = Props.onSelected;
+  var avatarStyle = isSelected ? Object.assign({}, avatarItem, avatarSelected) : avatarItem;
+  return React.createElement("div", {
+              style: avatarStyle,
+              onClick: (function (param) {
+                  return Curry._1(onSelected, undefined);
+                })
+            }, React.createElement("img", {
+                  style: avatarImg,
+                  src: avatar
+                }));
+}
+
+var AvatarItem = {
+  make: Profile$AvatarItem
+};
+
+function Profile$Avatar(Props) {
+  var selectAvatar = Props.selectAvatar;
+  var selectedAvatar = Props.selectedAvatar;
+  return React.createElement("div", {
+              style: avatarParent
+            }, React.createElement("div", {
+                  style: avatarTitle
+                }, Ru$Yap.s("> select an avatar")), React.createElement("div", {
+                  style: avatarList
+                }, Ru$Yap.mapi(AvatarCollection$Yap.avatars, (function (index, avatar) {
+                        return React.createElement(Profile$AvatarItem, {
+                                    avatar: avatar,
+                                    isSelected: selectedAvatar === index,
+                                    onSelected: (function (param) {
+                                        console.log("HERE", index);
+                                        return Curry._1(selectAvatar, (function (param) {
+                                                      return index;
+                                                    }));
+                                      }),
+                                    key: String(index)
+                                  });
+                      }))));
+}
+
+var Avatar = {
+  make: Profile$Avatar
+};
+
 function Profile$RightSection(Props) {
   var match = React.useState(function () {
         return "";
@@ -129,13 +223,18 @@ function Profile$RightSection(Props) {
         return "";
       });
   var setName = match$1[1];
+  var name = match$1[0];
   var match$2 = React.useState(function () {
+        return -1;
+      });
+  var selectedAvatar = match$2[0];
+  var match$3 = React.useState(function () {
         return false;
       });
-  var setInputVisible = match$2[1];
-  var isInputVisible = match$2[0];
+  var setInputVisible = match$3[1];
+  var isInputVisible = match$3[0];
   React.useEffect((function () {
-          var text = "my name is";
+          var text = "> my name is";
           Belt_Array.forEachWithIndex(text.split(""), (function (index, $$char) {
                   setTimeout((function (param) {
                           Curry._1(setTitle, (function (current) {
@@ -158,8 +257,9 @@ function Profile$RightSection(Props) {
   var lineStyle = isInputVisible ? Object.assign({}, line, {
           width: "100%"
         }) : line;
-  var match$3 = match$1[0].length;
-  var enterBtnStyle = match$3 !== 0 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
+  var match$4 = name.length;
+  var match$5 = selectedAvatar > -1;
+  var enterBtnStyle = match$4 !== 0 && match$5 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
   var onChange = function (e) {
     e.stopPropagation();
     var target = e.target;
@@ -167,6 +267,10 @@ function Profile$RightSection(Props) {
     return Curry._1(setName, (function (param) {
                   return value;
                 }));
+  };
+  var onClick = function (e) {
+    e.stopPropagation();
+    return UserDetails$Yap.saveUsername(name);
   };
   return React.createElement("div", {
               style: rightParent
@@ -183,8 +287,12 @@ function Profile$RightSection(Props) {
                           onChange: onChange
                         }), React.createElement("div", {
                           style: lineStyle
-                        }))), React.createElement("div", {
-                  style: enterBtnStyle
+                        }))), React.createElement(Profile$Avatar, {
+                  selectAvatar: match$2[1],
+                  selectedAvatar: selectedAvatar
+                }), React.createElement("div", {
+                  style: enterBtnStyle,
+                  onClick: onClick
                 }, React.createElement("img", {
                       src: "../../assets/arrow.svg"
                     })));
@@ -204,6 +312,8 @@ var make = Profile;
 
 exports.Style = Style;
 exports.LeftSection = LeftSection;
+exports.AvatarItem = AvatarItem;
+exports.Avatar = Avatar;
 exports.RightSection = RightSection;
 exports.make = make;
 /* react Not a pure module */
