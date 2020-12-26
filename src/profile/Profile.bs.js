@@ -32,7 +32,35 @@ var rightParent = {
 };
 
 var text1 = {
-  fontSize: "70px"
+  fontSize: "70px",
+  transition: "0.3s ease-out all"
+};
+
+var centerWrapper = {
+  display: "flex"
+};
+
+var inputWrapper = {
+  display: "flex",
+  marginLeft: "10px",
+  opacity: "0",
+  flexDirection: "column",
+  transition: "0.3s ease-out all",
+  transitionDelay: "0.5s"
+};
+
+var input = {
+  border: "none",
+  fontSize: "70px",
+  outline: "none"
+};
+
+var line = {
+  backgroundColor: "black",
+  height: "4px",
+  width: "0",
+  transition: "0.3s ease-out all",
+  transitionDelay: "0.5s"
 };
 
 var Style = {
@@ -40,7 +68,11 @@ var Style = {
   leftParent: leftParent,
   description: description,
   rightParent: rightParent,
-  text1: text1
+  text1: text1,
+  centerWrapper: centerWrapper,
+  inputWrapper: inputWrapper,
+  input: input,
+  line: line
 };
 
 function Profile$LeftSection(Props) {
@@ -60,22 +92,50 @@ function Profile$RightSection(Props) {
         return "";
       });
   var setTitle = match[1];
+  var match$1 = React.useState(function () {
+        return false;
+      });
+  var setInputVisible = match$1[1];
+  var isInputVisible = match$1[0];
   React.useEffect((function () {
-          Belt_Array.forEachWithIndex("my name is".split(""), (function (index, $$char) {
+          var text = "my name is";
+          Belt_Array.forEachWithIndex(text.split(""), (function (index, $$char) {
                   setTimeout((function (param) {
-                          return Curry._1(setTitle, (function (current) {
-                                        return current.concat($$char);
-                                      }));
+                          Curry._1(setTitle, (function (current) {
+                                  return current.concat($$char);
+                                }));
+                          if (index === (text.length - 1 | 0)) {
+                            return Curry._1(setInputVisible, (function (param) {
+                                          return true;
+                                        }));
+                          }
+                          
                         }), Math.imul(index + 1 | 0, 70));
                   
                 }));
           
         }), []);
+  var inputWrapperStyle = isInputVisible ? Object.assign({}, inputWrapper, {
+          opacity: "1"
+        }) : inputWrapper;
+  var lineStyle = isInputVisible ? Object.assign({}, line, {
+          width: "100%"
+        }) : line;
   return React.createElement("div", {
               style: rightParent
             }, React.createElement("div", {
-                  style: text1
-                }, Ru$Yap.s(match[0])));
+                  style: centerWrapper
+                }, React.createElement("div", {
+                      style: text1
+                    }, Ru$Yap.s(match[0])), React.createElement("div", {
+                      style: inputWrapperStyle
+                    }, React.createElement("input", {
+                          style: input,
+                          placeholder: "John Doe",
+                          type: "text"
+                        }), React.createElement("div", {
+                          style: lineStyle
+                        }))));
 }
 
 var RightSection = {
