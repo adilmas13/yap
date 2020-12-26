@@ -1,11 +1,13 @@
 'use strict';
 
+var React = require("react");
+var Profile$Yap = require("./profile/Profile.bs.js");
 
 function App(Props) {
-  return "App component";
+  return React.createElement(Profile$Yap.make, {});
 }
 
 var make = App;
 
 exports.make = make;
-/* No side effect */
+/* react Not a pure module */
