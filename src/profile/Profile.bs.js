@@ -6,7 +6,10 @@ var Ru$Yap = require("../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 
 var parent = {
-  display: "flex"
+  display: "flex",
+  height: "100vh",
+  padding: "0 10px",
+  alignItems: "center"
 };
 
 var leftParent = {
@@ -32,7 +35,7 @@ var rightParent = {
 };
 
 var text1 = {
-  fontSize: "70px",
+  fontSize: "4rem",
   transition: "0.3s ease-out all"
 };
 
@@ -50,8 +53,9 @@ var inputWrapper = {
 };
 
 var input = {
+  background: "transparent",
   border: "none",
-  fontSize: "70px",
+  fontSize: "4rem",
   outline: "none"
 };
 
