@@ -8,10 +8,6 @@ var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 function App(Props) {
   var url = ReasonReactRouter.useUrl(undefined, undefined);
   console.log("route", Belt_List.length(url.path));
-  var match = url.path;
-  if (match && match.hd === "profile" && !match.tl) {
-    return React.createElement(Profile$Yap.make, {});
-  }
   return React.createElement(Profile$Yap.make, {});
 }
 
