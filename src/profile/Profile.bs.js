@@ -30,7 +30,10 @@ var description = {
 
 var rightParent = {
   display: "flex",
+  height: "100vh",
   paddingLeft: "20px",
+  position: "relative",
+  width: "100%",
   alignItems: "center"
 };
 
@@ -55,8 +58,10 @@ var inputWrapper = {
 var input = {
   background: "transparent",
   border: "none",
+  color: "black",
   fontSize: "4rem",
-  outline: "none"
+  outline: "none",
+  opacity: "0.70"
 };
 
 var line = {
@@ -65,6 +70,28 @@ var line = {
   width: "0",
   transition: "0.3s ease-out all",
   transitionDelay: "0.5s"
+};
+
+var enterBtn = {
+  background: "linear-gradient(00deg, #00d2ff, #3a7bd5)",
+  bottom: "10px",
+  cursor: "pointer",
+  height: "70px",
+  padding: "20px",
+  position: "absolute",
+  right: "10px",
+  width: "70px",
+  opacity: "0",
+  borderRadius: "50%",
+  transition: "0.2s ease-out all",
+  transform: "scale(0)",
+  pointerEvents: "none"
+};
+
+var enterBtnActive = {
+  opacity: "1",
+  transform: "scale(1) rotate(180deg)",
+  pointerEvents: "all"
 };
 
 var Style = {
@@ -76,7 +103,9 @@ var Style = {
   centerWrapper: centerWrapper,
   inputWrapper: inputWrapper,
   input: input,
-  line: line
+  line: line,
+  enterBtn: enterBtn,
+  enterBtnActive: enterBtnActive
 };
 
 function Profile$LeftSection(Props) {
@@ -84,7 +113,7 @@ function Profile$LeftSection(Props) {
               style: leftParent
             }, React.createElement("div", {
                   style: description
-                }, Ru$Yap.s("Let's talk")));
+                }, Ru$Yap.s("let's talk")));
 }
 
 var LeftSection = {
@@ -97,10 +126,14 @@ function Profile$RightSection(Props) {
       });
   var setTitle = match[1];
   var match$1 = React.useState(function () {
+        return "";
+      });
+  var setName = match$1[1];
+  var match$2 = React.useState(function () {
         return false;
       });
-  var setInputVisible = match$1[1];
-  var isInputVisible = match$1[0];
+  var setInputVisible = match$2[1];
+  var isInputVisible = match$2[0];
   React.useEffect((function () {
           var text = "my name is";
           Belt_Array.forEachWithIndex(text.split(""), (function (index, $$char) {
@@ -125,6 +158,16 @@ function Profile$RightSection(Props) {
   var lineStyle = isInputVisible ? Object.assign({}, line, {
           width: "100%"
         }) : line;
+  var match$3 = match$1[0].length;
+  var enterBtnStyle = match$3 !== 0 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
+  var onChange = function (e) {
+    e.stopPropagation();
+    var target = e.target;
+    var value = target.value.trim();
+    return Curry._1(setName, (function (param) {
+                  return value;
+                }));
+  };
   return React.createElement("div", {
               style: rightParent
             }, React.createElement("div", {
@@ -135,11 +178,16 @@ function Profile$RightSection(Props) {
                       style: inputWrapperStyle
                     }, React.createElement("input", {
                           style: input,
-                          placeholder: "John Doe",
-                          type: "text"
+                          placeholder: "john doe",
+                          type: "text",
+                          onChange: onChange
                         }), React.createElement("div", {
                           style: lineStyle
-                        }))));
+                        }))), React.createElement("div", {
+                  style: enterBtnStyle
+                }, React.createElement("img", {
+                      src: "../../assets/arrow.svg"
+                    })));
 }
 
 var RightSection = {

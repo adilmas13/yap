@@ -12,7 +12,15 @@ module Style = {
     (),
   )
   let description = make(~fontSize="40px", ~color="white", ~fontWeight="600", ())
-  let rightParent = make(~display="flex", ~alignItems="center", ~paddingLeft="20px", ())
+  let rightParent = make(
+    ~display="flex",
+    ~alignItems="center",
+    ~paddingLeft="20px",
+    ~position="relative",
+    ~height="100vh",
+    ~width="100%",
+    (),
+  )
   let text1 = make(~fontSize="4rem", ~transition="0.3s ease-out all", ())
   let centerWrapper = make(~display="flex", ())
   let inputWrapper = make(
@@ -24,7 +32,15 @@ module Style = {
     ~transitionDelay="0.5s",
     (),
   )
-  let input = make(~border="none", ~outline="none", ~fontSize="4rem", ~background="transparent", ())
+  let input = make(
+    ~border="none",
+    ~outline="none",
+    ~fontSize="4rem",
+    ~background="transparent",
+    ~color="black",
+    ~opacity="0.70",
+    (),
+  )
   let line = make(
     ~width="0",
     ~height="4px",
@@ -33,13 +49,31 @@ module Style = {
     ~transitionDelay="0.5s",
     (),
   )
+  let enterBtn = make(
+    ~borderRadius="50%",
+    ~background="linear-gradient(00deg, #00d2ff, #3a7bd5)",
+    ~height="70px",
+    ~width="70px",
+    ~bottom="10px",
+    ~right="10px",
+    ~position="absolute",
+    ~cursor="pointer",
+    ~transition="0.2s ease-out all",
+    ~transform="scale(0)",
+    ~opacity="0",
+    ~pointerEvents="none",
+    ~padding="20px",
+    (),
+  )
+
+  let enterBtnActive = make(~transform="scale(1) rotate(180deg)", ~pointerEvents="all", ~opacity="1", ())
 }
 
 module LeftSection = {
   @react.component
   let make = () => {
     open Style
-    <div style={leftParent}> <div style={description}> {"Let's talk"->Ru.s} </div> </div>
+    <div style={leftParent}> <div style={description}> {"let's talk"->Ru.s} </div> </div>
   }
 }
 
@@ -47,6 +81,7 @@ module RightSection = {
   @react.component
   let make = () => {
     let (title, setTitle) = React.useState(() => "")
+    let (name, setName) = React.useState(() => "")
     let (isInputVisible, setInputVisible) = React.useState(() => false)
 
     React.useEffect1(() => {
@@ -81,14 +116,31 @@ module RightSection = {
         Style.line
       }
     }
+
+    let enterBtnStyle = {
+      switch name->Js.String2.length {
+      | 0 => Style.enterBtn
+      | _ => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
+      }
+    }
+
+    let onChange = (e: ReactEvent.Form.t): unit => {
+      e->ReactEvent.Form.stopPropagation
+      let target = e->ReactEvent.Form.target
+      let value = target["value"]->Js.String2.trim
+      setName(_ => value)
+    }
+
     open Style
     <div style={rightParent}>
       <div style={centerWrapper}>
         <div style={text1}> {title->Ru.s} </div>
         <div style={inputWrapperStyle}>
-          <input style={input} type_="text" placeholder="John Doe" /> <div style={lineStyle} />
+          <input style={input} type_="text" placeholder="john doe" onChange />
+          <div style={lineStyle} />
         </div>
       </div>
+      <div style={enterBtnStyle}> <img src="../../assets/arrow.svg" /> </div>
     </div>
   }
 }
