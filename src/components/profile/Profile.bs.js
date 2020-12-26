@@ -51,6 +51,7 @@ var centerWrapper = {
 
 var inputWrapper = {
   display: "flex",
+  height: "95px",
   marginLeft: "10px",
   opacity: "0",
   flexDirection: "column",
@@ -134,6 +135,15 @@ var avatarImg = {
   width: "70px"
 };
 
+var avatarWrapperActive = {
+  opacity: "1"
+};
+
+var avatarWrapper = {
+  opacity: "0",
+  transition: "0.3s ease-out all"
+};
+
 var Style = {
   parent: parent,
   leftParent: leftParent,
@@ -151,7 +161,9 @@ var Style = {
   avatarList: avatarList,
   avatarItem: avatarItem,
   avatarSelected: avatarSelected,
-  avatarImg: avatarImg
+  avatarImg: avatarImg,
+  avatarWrapperActive: avatarWrapperActive,
+  avatarWrapper: avatarWrapper
 };
 
 function Profile$LeftSection(Props) {
@@ -200,7 +212,6 @@ function Profile$Avatar(Props) {
                                     avatar: avatar,
                                     isSelected: selectedAvatar === index,
                                     onSelected: (function (param) {
-                                        console.log("HERE", index);
                                         return Curry._1(selectAvatar, (function (param) {
                                                       return index;
                                                     }));
@@ -270,8 +281,10 @@ function Profile$RightSection(Props) {
   };
   var onClick = function (e) {
     e.stopPropagation();
-    return UserDetails$Yap.saveUsername(name);
+    UserDetails$Yap.saveUsername(name);
+    return UserDetails$Yap.saveAvatar(AvatarCollection$Yap.avatars[selectedAvatar]);
   };
+  var avatarLayoutStyle = name.length > 0 ? Object.assign({}, avatarWrapper, avatarWrapperActive) : avatarWrapper;
   return React.createElement("div", {
               style: rightParent
             }, React.createElement("div", {
@@ -287,10 +300,12 @@ function Profile$RightSection(Props) {
                           onChange: onChange
                         }), React.createElement("div", {
                           style: lineStyle
-                        }))), React.createElement(Profile$Avatar, {
-                  selectAvatar: match$2[1],
-                  selectedAvatar: selectedAvatar
-                }), React.createElement("div", {
+                        }))), React.createElement("div", {
+                  style: avatarLayoutStyle
+                }, React.createElement(Profile$Avatar, {
+                      selectAvatar: match$2[1],
+                      selectedAvatar: selectedAvatar
+                    })), React.createElement("div", {
                   style: enterBtnStyle,
                   onClick: onClick
                 }, React.createElement("img", {

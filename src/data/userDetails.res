@@ -1,6 +1,11 @@
 @bs.scope("localStorage") @bs.val external getItem: unit => string = "random"
 @bs.scope("localStorage") @bs.val external setItem: (string, string) => unit = "";
-// let someNumber = random()
 
+module Constants = {
+    let username = "username"
+    let avatar = "avatar"
+}
 
-let saveUsername = (name:string) => setItem("username", name)
+let saveUsername = (name:string) => setItem(Constants.username, name)
+
+let saveAvatar = (avatar:string) => setItem(Constants.avatar, avatar)

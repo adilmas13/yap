@@ -31,6 +31,7 @@ module Style = {
     ~opacity="0",
     ~transition="0.3s ease-out all",
     ~transitionDelay="0.5s",
+    ~height="95px",
     (),
   )
   let input = make(
@@ -67,22 +68,44 @@ module Style = {
     (),
   )
 
-  let enterBtnActive = make(~transform="scale(1) rotate(180deg)", ~pointerEvents="all", ~opacity="1", ())
+  let enterBtnActive = make(
+    ~transform="scale(1) rotate(180deg)",
+    ~pointerEvents="all",
+    ~opacity="1",
+    (),
+  )
 
   let avatarParent = make(~display="flex", ~flexDirection="column", ())
 
   let avatarTitle = make(~fontSize="4rem", ())
 
-  let avatarList = make(~display="grid", ~gridTemplateColumns="auto auto auto auto auto", ~justifyContent="flex-start", ~gridGap="20px", ~paddingLeft="50px", ())
+  let avatarList = make(
+    ~display="grid",
+    ~gridTemplateColumns="auto auto auto auto auto",
+    ~justifyContent="flex-start",
+    ~gridGap="20px",
+    ~paddingLeft="50px",
+    (),
+  )
 
-  let avatarItem = make(~display="flex",~width="100px", ~height="100px", ~borderRadius="10px", ~alignItems="center", ~justifyContent="center",
-~cursor="pointer",
+  let avatarItem = make(
+    ~display="flex",
+    ~width="100px",
+    ~height="100px",
+    ~borderRadius="10px",
+    ~alignItems="center",
+    ~justifyContent="center",
+    ~cursor="pointer",
     ~transition="0.3s ease-out all",
     ~border="2px solid transparent",
-  ())
+    (),
+  )
 
   let avatarSelected = make(~border="2px solid #3a7bd5", ())
   let avatarImg = make(~width="70px", ())
+
+  let avatarWrapperActive = make(~opacity="1", ())
+  let avatarWrapper = make(~opacity="0", ~transition="0.3s ease-out all", ())
 }
 
 module LeftSection = {
@@ -94,43 +117,40 @@ module LeftSection = {
 }
 
 module AvatarItem = {
-    open Style
-    @react.component
-    let make = (~avatar: string, ~isSelected: bool, ~onSelected: (unit) => unit) => {
-        let avatarStyle = {
-            if(isSelected){
-                ReactDOMRe.Style.combine(Style.avatarItem, Style.avatarSelected)
-            }else{
-                Style.avatarItem
-            }
-        }
-        <div style={avatarStyle} onClick={_ => onSelected()}>
-        <img src={avatar} style={avatarImg}/>
-        </div>
+  open Style
+  @react.component
+  let make = (~avatar: string, ~isSelected: bool, ~onSelected: unit => unit) => {
+    let avatarStyle = {
+      if isSelected {
+        ReactDOMRe.Style.combine(Style.avatarItem, Style.avatarSelected)
+      } else {
+        Style.avatarItem
+      }
     }
+    <div style={avatarStyle} onClick={_ => onSelected()}>
+      <img src={avatar} style={avatarImg} />
+    </div>
+  }
 }
 
 module Avatar = {
-    open Style
-    @react.component
-    let make = (~selectAvatar, ~selectedAvatar) => {
-        <div style={avatarParent}>
-            <div style={avatarTitle}>{"> select an avatar" -> Ru.s}</div>
-            <div style={avatarList}>
-                {AvatarCollection.avatars -> Ru.mapi((index, avatar) =>
-                <AvatarItem
-                key={index->string_of_int}
-                avatar
-                isSelected={selectedAvatar === index}
-                onSelected={_ => {
-                    Js.log2("HERE", index)
-                    selectAvatar(_ => index)
-                }}
-                />
-          )}
-            </div>
-        </div>
-    }
+  open Style
+  @react.component
+  let make = (~selectAvatar, ~selectedAvatar) => {
+    <div style={avatarParent}>
+      <div style={avatarTitle}> {"> select an avatar"->Ru.s} </div>
+      <div style={avatarList}>
+        {AvatarCollection.avatars->Ru.mapi((index, avatar) =>
+          <AvatarItem
+            key={index->string_of_int}
+            avatar
+            isSelected={selectedAvatar === index}
+            onSelected={_ => selectAvatar(_ => index)}
+          />
+        )}
+      </div>
+    </div>
+  }
 }
 
 module RightSection = {
@@ -175,7 +195,7 @@ module RightSection = {
     }
 
     let enterBtnStyle = {
-      switch (name->Js.String2.length, selectedAvatar > -1){
+      switch (name->Js.String2.length, selectedAvatar > -1) {
       | (0, _)
       | (_, false) => Style.enterBtn
       | (_, true) => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
@@ -190,10 +210,18 @@ module RightSection = {
     }
 
     let onClick = (e: ReactEvent.Mouse.t): unit => {
-          e->ReactEvent.Mouse.stopPropagation
-          UserDetails.saveUsername(name)
-        }
+      e->ReactEvent.Mouse.stopPropagation
+      UserDetails.saveUsername(name)
+      UserDetails.saveAvatar(AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar))
+    }
 
+    let avatarLayoutStyle = {
+      if name->Js.String2.length > 0 {
+        ReactDOMRe.Style.combine(Style.avatarWrapper, Style.avatarWrapperActive)
+      } else {
+        Style.avatarWrapper
+      }
+    }
     open Style
     <div style={rightParent}>
       <div style={centerWrapper}>
@@ -203,7 +231,7 @@ module RightSection = {
           <div style={lineStyle} />
         </div>
       </div>
-      <Avatar selectAvatar selectedAvatar/>
+      <div style={avatarLayoutStyle}> <Avatar selectAvatar selectedAvatar /> </div>
       <div style={enterBtnStyle} onClick> <img src="../../assets/arrow.svg" /> </div>
     </div>
   }
