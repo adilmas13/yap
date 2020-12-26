@@ -79,7 +79,7 @@ var line = {
   position: "absolute",
   width: "0",
   borderRadius: "5px",
-  transition: "0.3s ease-out all",
+  transition: "0.5s ease-out all",
   transitionDelay: "0.5s"
 };
 
