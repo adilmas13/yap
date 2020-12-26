@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const outputDir = path.join(__dirname, "bundleOutput")
+const outputDir = path.join(__dirname, "dist")
 
 module.exports = {
   entry: './src/Index.bs.js',
@@ -25,4 +25,18 @@ module.exports = {
     port: process.env.PORT || 8000,
     historyApiFallback: true,
   },
+  module: {
+    rules: [
+      {
+        test: /\.(jpg|png|svg)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'assets/'
+          }
+        },
+      }
+    ],
+  }
 };

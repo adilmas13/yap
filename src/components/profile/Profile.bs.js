@@ -4,6 +4,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
@@ -197,7 +198,7 @@ function Profile$LeftSection(Props) {
                 }, Ru$Yap.s("let's talk")), React.createElement("div", {
                   style: logoWrapper
                 }, React.createElement("img", {
-                      src: "../../assets/logo.svg",
+                      src: AssetLoader$Yap.logo,
                       width: "50px"
                     }), React.createElement("div", {
                       style: logoText
@@ -339,7 +340,7 @@ function Profile$RightSection(Props) {
                   style: enterBtnStyle,
                   onClick: onClick
                 }, React.createElement("img", {
-                      src: "../../assets/arrow.svg"
+                      src: AssetLoader$Yap.arrow
                     })));
 }
 

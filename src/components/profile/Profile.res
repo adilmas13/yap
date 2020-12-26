@@ -125,7 +125,7 @@ module LeftSection = {
     <div style={leftParent}>
      <div style={description}> {"let's talk"->Ru.s} </div>
      <div style={logoWrapper}>
-        <img src="../../assets/logo.svg" width="50px"/>
+        <img src={AssetLoader.logo} width="50px"/>
         <div style={logoText}>{"yap !!"-> Ru.s}</div>
      </div>
      </div>
@@ -248,7 +248,7 @@ module RightSection = {
         </div>
       </div>
       <div style={avatarLayoutStyle}> <Avatar selectAvatar selectedAvatar /> </div>
-      <div style={enterBtnStyle} onClick> <img src="../../assets/arrow.svg" /> </div>
+      <div style={enterBtnStyle} onClick> <img src={AssetLoader.arrow} /> </div>
     </div>
   }
 }
