@@ -18,8 +18,11 @@ var FirebaseConfig = {
   make: make
 };
 
+var Firestore = {};
+
 var firebase = App.default;
 
 exports.FirebaseConfig = FirebaseConfig;
+exports.Firestore = Firestore;
 exports.firebase = firebase;
 /* firebase Not a pure module */

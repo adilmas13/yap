@@ -4,6 +4,9 @@ var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 
 function Chat(Props) {
+  React.useEffect((function () {
+          
+        }), []);
   return React.createElement("div", undefined, Ru$Yap.s("Chat room"));
 }
 
