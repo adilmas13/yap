@@ -45,6 +45,8 @@ module Firestore = {
   type t
   type collection
 
+  @bs.module external require: unit = "firebase/firestore"
+
   @bs.send external collection: (t, string) => collection = "collection"
 
   @bs.send external add: (collection, 'a) => Js.Promise.t<DocRef.t> = "add"
@@ -55,8 +57,6 @@ module Firestore = {
 @bs.get external default: obj => firebase = "default"
 
 @bs.send external initializeApp: (firebase, FirebaseConfig.t) => unit = "initializeApp"
-
-@bs.module external _firestoreImport: unit = "firebase/firestore"
 
 @bs.send external firestore: firebase => Firestore.t = "firestore"
 
