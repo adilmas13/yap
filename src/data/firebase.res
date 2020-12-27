@@ -40,7 +40,10 @@ module FirebaseConfig = {
 
 module Firestore = {
   module DocRef = {
-    type t;
+    type t
+      @bs.get external exists: t => bool = "exists";
+      @bs.get external id: t => string = "id";
+      @bs.send external data: (t, unit) => 'a = "data";
   }
   type t
   type collection
@@ -50,6 +53,10 @@ module Firestore = {
   @bs.send external collection: (t, string) => collection = "collection"
 
   @bs.send external add: (collection, 'a) => Js.Promise.t<DocRef.t> = "add"
+
+  @bs.send external doc: (collection, string) => DocRef.t = "doc"
+
+  @bs.send external onSnapshot: (DocRef.t, DocRef.t => unit) => unit = "onSnapshot"
 }
 
 @bs.module external _firebase: obj = "firebase/app"
@@ -63,4 +70,3 @@ module Firestore = {
 let firebase = {
   _firebase->default
 }
-
