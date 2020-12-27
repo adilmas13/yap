@@ -4,3 +4,6 @@ external logo : string = "default";
 
 @bs.module("../assets/arrow.svg")
 external arrow : string = "default";
+
+@bs.module("../assets/dead.svg")
+external dead : string = "default";
