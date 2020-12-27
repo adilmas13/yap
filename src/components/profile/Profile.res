@@ -26,9 +26,9 @@ module Style = {
   let text1 = make(~fontSize="4rem", ~transition="0.3s ease-out all", ())
   let centerWrapper = make(~display="flex", ())
   let inputWrapper = make(
-  ~position="relative",
+    ~position="relative",
     ~display="flex",
-~justifyContent="center",
+    ~justifyContent="center",
     ~flexDirection="column",
     ~marginLeft="10px",
     ~opacity="0",
@@ -49,7 +49,7 @@ module Style = {
   let line = make(
     ~width="0",
     ~height="4px",
-      ~background="linear-gradient(90deg, #3a7bd5, #00d2ff)",
+    ~background="linear-gradient(90deg, #3a7bd5, #00d2ff)",
     ~transition="0.5s ease-out all",
     ~transitionDelay="0.5s",
     ~position="absolute",
@@ -113,9 +113,16 @@ module Style = {
   let avatarWrapperActive = make(~opacity="1", ())
   let avatarWrapper = make(~opacity="0", ~transition="0.3s ease-out all", ())
 
-  let logoWrapper = make(~display="flex", ~position="absolute", ~top="20px", ~left="20px", ~justifyContent="center", ())
+  let logoWrapper = make(
+    ~display="flex",
+    ~position="absolute",
+    ~top="20px",
+    ~left="20px",
+    ~justifyContent="center",
+    (),
+  )
 
-  let logoText=make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
+  let logoText = make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
 }
 
 module LeftSection = {
@@ -123,12 +130,11 @@ module LeftSection = {
   let make = () => {
     open Style
     <div style={leftParent}>
-     <div style={description}> {"let's talk"->Ru.s} </div>
-     <div style={logoWrapper}>
-        <img src={AssetLoader.logo} width="50px"/>
-        <div style={logoText}>{"yap !!"-> Ru.s}</div>
-     </div>
-     </div>
+      <div style={description}> {"let's talk"->Ru.s} </div>
+      <div style={logoWrapper}>
+        <img src={AssetLoader.logo} width="50px" /> <div style={logoText}> {"yap !!"->Ru.s} </div>
+      </div>
+    </div>
   }
 }
 
