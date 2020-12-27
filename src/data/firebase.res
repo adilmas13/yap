@@ -39,13 +39,15 @@ module FirebaseConfig = {
 }
 
 module Firestore = {
+  module DocRef = {
+    type t;
+  }
   type t
   type collection
-  type docReference
 
   @bs.send external collection: (t, string) => collection = "collection"
 
-  @bs.send external add: (collection, 'a) => Js.Promise.t<docReference> = "add"
+  @bs.send external add: (collection, 'a) => Js.Promise.t<DocRef.t> = "add"
 }
 
 @bs.module external _firebase: obj = "firebase/app"

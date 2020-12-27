@@ -18,7 +18,11 @@ var FirebaseConfig = {
   make: make
 };
 
-var Firestore = {};
+var DocRef = {};
+
+var Firestore = {
+  DocRef: DocRef
+};
 
 var firebase = App.default;
 
