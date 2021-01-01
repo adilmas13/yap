@@ -8,7 +8,7 @@ var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
-var rightParent = {
+var parent = {
   display: "flex",
   height: "100vh",
   paddingLeft: "20px",
@@ -128,7 +128,7 @@ var avatarWrapper = {
 };
 
 var Style = {
-  rightParent: rightParent,
+  parent: parent,
   text1: text1,
   centerWrapper: centerWrapper,
   inputWrapper: inputWrapper,
@@ -254,7 +254,7 @@ function Profile(Props) {
   };
   var avatarLayoutStyle = name.length > 0 ? Object.assign({}, avatarWrapper, avatarWrapperActive) : avatarWrapper;
   return React.createElement("div", {
-              style: rightParent
+              style: parent
             }, React.createElement("div", {
                   style: centerWrapper
                 }, React.createElement("div", {

@@ -3,6 +3,7 @@
 var React = require("react");
 var Ru$Yap = require("./utils/ru.bs.js");
 var Chat$Yap = require("./components/chat/Chat.bs.js");
+var Home$Yap = require("./components/home/Home.bs.js");
 var Profile$Yap = require("./components/profile/Profile.bs.js");
 var AssetLoader$Yap = require("./utils/assetLoader.bs.js");
 var PageNotFound$Yap = require("./components/pageNotFound/PageNotFound.bs.js");
@@ -20,7 +21,7 @@ var leftParent = {
   display: "flex",
   height: "calc(100vh - 20px)",
   position: "relative",
-  width: "30%",
+  width: "25%",
   borderRadius: "50px",
   alignItems: "center",
   justifyContent: "center"
@@ -47,12 +48,17 @@ var logoText = {
   marginLeft: "10px"
 };
 
+var bodyWrapper = {
+  flex: "1"
+};
+
 var Style = {
   parent: parent,
   leftParent: leftParent,
   description: description,
   logoWrapper: logoWrapper,
-  logoText: logoText
+  logoText: logoText,
+  bodyWrapper: bodyWrapper
 };
 
 function App$LeftSection(Props) {
@@ -88,6 +94,13 @@ function App(Props) {
             body = React.createElement(Chat$Yap.make, {});
           }
           break;
+      case "home" :
+          if (match.tl) {
+            exit = 1;
+          } else {
+            body = React.createElement(Home$Yap.make, {});
+          }
+          break;
       case "profile" :
           if (match.tl) {
             exit = 1;
@@ -106,7 +119,9 @@ function App(Props) {
   }
   return React.createElement("div", {
               style: parent
-            }, React.createElement(App$LeftSection, {}), body);
+            }, React.createElement(App$LeftSection, {}), React.createElement("div", {
+                  style: bodyWrapper
+                }, body));
 }
 
 var make = App;

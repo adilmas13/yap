@@ -1,7 +1,7 @@
 module Style = {
   open ReactDOMRe.Style
 
-  let rightParent = make(
+  let parent = make(
     ~display="flex",
     ~flexDirection="column",
     ~paddingLeft="20px",
@@ -208,7 +208,7 @@ let make = () => {
     }
   }
   open Style
-  <div style={rightParent}>
+  <div style={parent}>
     <div style={centerWrapper}>
       <div style={text1}> {title->Ru.s} </div>
       <div style={inputWrapperStyle}>

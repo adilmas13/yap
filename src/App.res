@@ -5,7 +5,7 @@ module Style = {
   let leftParent = make(
     ~display="flex",
     ~borderRadius="50px",
-    ~width="30%",
+    ~width="25%",
     ~height="calc(100vh - 20px)",
     ~background="linear-gradient(180deg, #00d2ff, #3a7bd5)",
     ~justifyContent="center",
@@ -25,6 +25,8 @@ module Style = {
   )
 
   let logoText = make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
+
+  let bodyWrapper = make(~flex="1", ())
 }
 
 module LeftSection = {
@@ -47,10 +49,11 @@ let make = () => {
   | list{}
   | list{"profile"} =>
     <Profile />
+  | list{"home"} => <Home />
   | list{"chat"} => <Chat />
   | _ => <PageNotFound />
   }
 
   open Style
-  <div style={parent}> <LeftSection /> {body} </div>
+  <div style={parent}> <LeftSection /> <div style={bodyWrapper}> {body} </div> </div>
 }
