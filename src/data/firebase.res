@@ -41,9 +41,9 @@ module FirebaseConfig = {
 module Firestore = {
   module DocRef = {
     type t
-      @bs.get external exists: t => bool = "exists";
-      @bs.get external id: t => string = "id";
-      @bs.send external data: (t, unit) => 'a = "data";
+    @bs.get external exists: t => bool = "exists"
+    @bs.get external id: t => string = "id"
+    @bs.send external data: (t, unit) => 'a = "data"
   }
   type t
   type collection

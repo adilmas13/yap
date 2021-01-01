@@ -1,18 +1,6 @@
 module Style = {
   open ReactDOMRe.Style
-  let parent = make(~display="flex", ~alignItems="center", ~height="100vh", ~padding="0 10px", ())
-  let leftParent = make(
-    ~display="flex",
-    ~borderRadius="50px",
-    ~width="30%",
-    ~height="calc(100vh - 20px)",
-    ~background="linear-gradient(180deg, #00d2ff, #3a7bd5)",
-    ~justifyContent="center",
-    ~alignItems="center",
-    ~position="relative",
-    (),
-  )
-  let description = make(~fontSize="40px", ~color="white", ~fontWeight="600", ())
+
   let rightParent = make(
     ~display="flex",
     ~flexDirection="column",
@@ -112,30 +100,6 @@ module Style = {
 
   let avatarWrapperActive = make(~opacity="1", ())
   let avatarWrapper = make(~opacity="0", ~transition="0.3s ease-out all", ())
-
-  let logoWrapper = make(
-    ~display="flex",
-    ~position="absolute",
-    ~top="20px",
-    ~left="20px",
-    ~justifyContent="center",
-    (),
-  )
-
-  let logoText = make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
-}
-
-module LeftSection = {
-  @react.component
-  let make = () => {
-    open Style
-    <div style={leftParent}>
-      <div style={description}> {"let's talk"->Ru.s} </div>
-      <div style={logoWrapper}>
-        <img src={AssetLoader.logo} width="50px" /> <div style={logoText}> {"yap !!"->Ru.s} </div>
-      </div>
-    </div>
-  }
 }
 
 module AvatarItem = {
@@ -175,92 +139,84 @@ module Avatar = {
   }
 }
 
-module RightSection = {
-  @react.component
-  let make = () => {
-    let (title, setTitle) = React.useState(() => "")
-    let (name, setName) = React.useState(() => "")
-    let (selectedAvatar, selectAvatar) = React.useState(() => -1)
-    let (isInputVisible, setInputVisible) = React.useState(() => false)
-
-    React.useEffect1(() => {
-      let text = "> my name is"
-
-      text
-      ->Js.String2.split("")
-      ->Belt.Array.forEachWithIndex((index, char) => {
-        Js.Global.setTimeout(() => {
-          setTitle(current => Js.String2.concat(current, char))
-          if index == text->Js.String2.length - 1 {
-            setInputVisible(_ => true)
-          }
-        }, (index + 1) * 70)->ignore
-      })
-
-      None
-    }, [])
-
-    let inputWrapperStyle = {
-      if isInputVisible {
-        ReactDOMRe.Style.combine(Style.inputWrapper, ReactDOMRe.Style.make(~opacity="1", ()))
-      } else {
-        Style.inputWrapper
-      }
-    }
-
-    let lineStyle = {
-      if isInputVisible {
-        ReactDOMRe.Style.combine(Style.line, ReactDOMRe.Style.make(~width="100%", ()))
-      } else {
-        Style.line
-      }
-    }
-
-    let enterBtnStyle = {
-      switch (name->Js.String2.length, selectedAvatar > -1) {
-      | (0, _)
-      | (_, false) => Style.enterBtn
-      | (_, true) => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
-      }
-    }
-
-    let onChange = (e: ReactEvent.Form.t): unit => {
-      e->ReactEvent.Form.stopPropagation
-      let target = e->ReactEvent.Form.target
-      let value = target["value"]->Js.String2.trim
-      setName(_ => value)
-    }
-
-    let onClick = (e: ReactEvent.Mouse.t): unit => {
-      e->ReactEvent.Mouse.stopPropagation
-      UserDetails.saveUsername(name)
-      UserDetails.saveAvatar(AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar))
-    }
-
-    let avatarLayoutStyle = {
-      if name->Js.String2.length > 0 {
-        ReactDOMRe.Style.combine(Style.avatarWrapper, Style.avatarWrapperActive)
-      } else {
-        Style.avatarWrapper
-      }
-    }
-    open Style
-    <div style={rightParent}>
-      <div style={centerWrapper}>
-        <div style={text1}> {title->Ru.s} </div>
-        <div style={inputWrapperStyle}>
-          <input style={input} type_="text" placeholder="john doe" onChange />
-          <div style={lineStyle} />
-        </div>
-      </div>
-      <div style={avatarLayoutStyle}> <Avatar selectAvatar selectedAvatar /> </div>
-      <div style={enterBtnStyle} onClick> <img src={AssetLoader.arrow} /> </div>
-    </div>
-  }
-}
-
 @react.component
 let make = () => {
+  let (title, setTitle) = React.useState(() => "")
+  let (name, setName) = React.useState(() => "")
+  let (selectedAvatar, selectAvatar) = React.useState(() => -1)
+  let (isInputVisible, setInputVisible) = React.useState(() => false)
+
+  React.useEffect1(() => {
+    let text = "> my name is"
+
+    text
+    ->Js.String2.split("")
+    ->Belt.Array.forEachWithIndex((index, char) => {
+      Js.Global.setTimeout(() => {
+        setTitle(current => Js.String2.concat(current, char))
+        if index == text->Js.String2.length - 1 {
+          setInputVisible(_ => true)
+        }
+      }, (index + 1) * 70)->ignore
+    })
+
+    None
+  }, [])
+
+  let inputWrapperStyle = {
+    if isInputVisible {
+      ReactDOMRe.Style.combine(Style.inputWrapper, ReactDOMRe.Style.make(~opacity="1", ()))
+    } else {
+      Style.inputWrapper
+    }
+  }
+
+  let lineStyle = {
+    if isInputVisible {
+      ReactDOMRe.Style.combine(Style.line, ReactDOMRe.Style.make(~width="100%", ()))
+    } else {
+      Style.line
+    }
+  }
+
+  let enterBtnStyle = {
+    switch (name->Js.String2.length, selectedAvatar > -1) {
+    | (0, _)
+    | (_, false) => Style.enterBtn
+    | (_, true) => ReactDOMRe.Style.combine(Style.enterBtn, Style.enterBtnActive)
+    }
+  }
+
+  let onChange = (e: ReactEvent.Form.t): unit => {
+    e->ReactEvent.Form.stopPropagation
+    let target = e->ReactEvent.Form.target
+    let value = target["value"]->Js.String2.trim
+    setName(_ => value)
+  }
+
+  let onClick = (e: ReactEvent.Mouse.t): unit => {
+    e->ReactEvent.Mouse.stopPropagation
+    UserDetails.saveUsername(name)
+    UserDetails.saveAvatar(AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar))
+  }
+
+  let avatarLayoutStyle = {
+    if name->Js.String2.length > 0 {
+      ReactDOMRe.Style.combine(Style.avatarWrapper, Style.avatarWrapperActive)
+    } else {
+      Style.avatarWrapper
+    }
+  }
   open Style
-  <div style={parent}> <LeftSection /> <RightSection /> </div>
+  <div style={rightParent}>
+    <div style={centerWrapper}>
+      <div style={text1}> {title->Ru.s} </div>
+      <div style={inputWrapperStyle}>
+        <input style={input} type_="text" placeholder="john doe" onChange />
+        <div style={lineStyle} />
+      </div>
+    </div>
+    <div style={avatarLayoutStyle}> <Avatar selectAvatar selectedAvatar /> </div>
+    <div style={enterBtnStyle} onClick> <img src={AssetLoader.arrow} /> </div>
+  </div>
 }

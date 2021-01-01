@@ -8,30 +8,6 @@ var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
-var parent = {
-  display: "flex",
-  height: "100vh",
-  padding: "0 10px",
-  alignItems: "center"
-};
-
-var leftParent = {
-  background: "linear-gradient(180deg, #00d2ff, #3a7bd5)",
-  display: "flex",
-  height: "calc(100vh - 20px)",
-  position: "relative",
-  width: "30%",
-  borderRadius: "50px",
-  alignItems: "center",
-  justifyContent: "center"
-};
-
-var description = {
-  color: "white",
-  fontSize: "40px",
-  fontWeight: "600"
-};
-
 var rightParent = {
   display: "flex",
   height: "100vh",
@@ -151,25 +127,7 @@ var avatarWrapper = {
   transition: "0.3s ease-out all"
 };
 
-var logoWrapper = {
-  display: "flex",
-  left: "20px",
-  position: "absolute",
-  top: "20px",
-  justifyContent: "center"
-};
-
-var logoText = {
-  color: "#fff",
-  fontSize: "25px",
-  fontWeight: "600",
-  marginLeft: "10px"
-};
-
 var Style = {
-  parent: parent,
-  leftParent: leftParent,
-  description: description,
   rightParent: rightParent,
   text1: text1,
   centerWrapper: centerWrapper,
@@ -185,28 +143,7 @@ var Style = {
   avatarSelected: avatarSelected,
   avatarImg: avatarImg,
   avatarWrapperActive: avatarWrapperActive,
-  avatarWrapper: avatarWrapper,
-  logoWrapper: logoWrapper,
-  logoText: logoText
-};
-
-function Profile$LeftSection(Props) {
-  return React.createElement("div", {
-              style: leftParent
-            }, React.createElement("div", {
-                  style: description
-                }, Ru$Yap.s("let's talk")), React.createElement("div", {
-                  style: logoWrapper
-                }, React.createElement("img", {
-                      src: AssetLoader$Yap.logo,
-                      width: "50px"
-                    }), React.createElement("div", {
-                      style: logoText
-                    }, Ru$Yap.s("yap !!"))));
-}
-
-var LeftSection = {
-  make: Profile$LeftSection
+  avatarWrapper: avatarWrapper
 };
 
 function Profile$AvatarItem(Props) {
@@ -256,7 +193,7 @@ var Avatar = {
   make: Profile$Avatar
 };
 
-function Profile$RightSection(Props) {
+function Profile(Props) {
   var match = React.useState(function () {
         return "";
       });
@@ -344,22 +281,10 @@ function Profile$RightSection(Props) {
                     })));
 }
 
-var RightSection = {
-  make: Profile$RightSection
-};
-
-function Profile(Props) {
-  return React.createElement("div", {
-              style: parent
-            }, React.createElement(Profile$LeftSection, {}), React.createElement(Profile$RightSection, {}));
-}
-
 var make = Profile;
 
 exports.Style = Style;
-exports.LeftSection = LeftSection;
 exports.AvatarItem = AvatarItem;
 exports.Avatar = Avatar;
-exports.RightSection = RightSection;
 exports.make = make;
 /* react Not a pure module */
