@@ -13,3 +13,6 @@ external groupChat : string = "default";
 
 @bs.module("../assets/talking.svg")
 external startChat : string = "default";
+
+@bs.module("../assets/send.svg")
+external send : string = "default";
