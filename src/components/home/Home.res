@@ -22,6 +22,7 @@ module Style = {
     ~cursor="pointer",
     ~alignItems="center",
     ~justifyContent="center",
+    ~position="relative",
     (),
   )
   let choiceTitle = make(
@@ -36,6 +37,79 @@ module Style = {
   let choiceIcon = make(~width="100px", ())
 
   let startConversationIcon = make(~marginLeft="20px", ())
+
+  let joinConversationParent = make(~perspective="1000px", ~width="200px", ~height="200px", ())
+
+  let joinConversationWrapper = make(
+    ~position="relative",
+    ~width="100%",
+    ~height="100%",
+    ~transition="transform 0.6s",
+    ~transformStyle="preserve-3d",
+    (),
+  )
+  let panel = make(
+    ~position="absolute",
+    ~width="100%",
+    ~height="100%",
+    ~background="#fafafa",
+    ~borderRadius="10px",
+    ~border="1px solid #ccc",
+    ~backfaceVisibility="hidden",
+    ~padding="0 10px",
+    (),
+  )
+  let frontPanel = make(
+    ~display="flex",
+    ~flexDirection="column",
+    ~alignItems="center",
+    ~justifyContent="center",
+    (),
+  )
+
+  let backPanel = make(
+    ~transform="rotateY(180deg)",
+    ~display="flex",
+    ~flexDirection="column",
+    ~justifyContent="center",
+    ~alignItems="center",
+    (),
+  )
+
+  let enterId = make(~width="100%", ~textAlign="center", ~fontSize="1.1rem", ~fontWeight="600", ())
+
+  let input = make(
+    ~border="none",
+    ~outline="none",
+    ~width="100%",
+    ~textAlign="center",
+    ~background="transparent",
+    ~fontSize="26px",
+    ~borderBottom="2px solid #3a7bd5",
+    ~color="black",
+    ~opacity="0.70",
+    ~marginTop="5px",
+    (),
+  )
+
+  let active = make(~transform="rotateY(180deg)", ())
+
+  let enterBtn = make(
+    ~borderRadius="50%",
+    ~background="linear-gradient(0deg, #00d2ff, #3a7bd5)",
+    ~height="35px",
+    ~width="35px",
+    ~marginTop="10px",
+    ~cursor="none",
+    ~transition="0.2s ease-out all",
+    ~pointerEvents="none",
+    ~padding="10px",
+    ~transform="rotate(180deg)",
+    ~opacity="0.2",
+    (),
+  )
+
+  let enterBtnActive = make(~cursor="pointer", ~pointerEvents="all", ~opacity="1", ())
 }
 
 module StartNewConvesation = {
@@ -56,9 +130,58 @@ module JoinConvesation = {
   open Style
   @react.component
   let make = () => {
-    <div style={choice}>
-      <img style={choiceIcon} src={AssetLoader.groupChat} />
-      <div style={choiceTitle}> {"join a conversation"->Ru.s} </div>
+    let (isActive, setActive) = React.useState(() => false)
+    let (id, setId) = React.useState(() => "")
+
+    let joinConversationStyle = {
+      open ReactDOMRe.Style
+      switch isActive {
+      | true => combine(Style.joinConversationWrapper, Style.active)
+      | false => Style.joinConversationWrapper
+      }
+    }
+
+    let enterBtnStyle = {
+      open ReactDOMRe.Style
+      switch id->Js.String2.trim->Js.String2.length < 5 {
+      | true => Style.enterBtn
+      | false => combine(Style.enterBtn, Style.enterBtnActive)
+      }
+    }
+
+    let onClick = e => {
+      e->ReactEvent.Synthetic.stopPropagation
+      setActive(active => !active)
+    }
+
+    let onChange = (e: ReactEvent.Form.t): unit => {
+      e->ReactEvent.Form.stopPropagation
+      let target = e->ReactEvent.Form.target
+      let value = target["value"]->Js.String2.trim
+      setId(_ => value)
+    }
+
+    let enterClick = e => {
+      e->ReactEventRe.Mouse.stopPropagation
+    }
+
+    <div style={joinConversationParent}>
+      <div style=joinConversationStyle onClick>
+        <div style={ReactDOMRe.Style.combine(panel, frontPanel)}>
+          <img style={choiceIcon} src={AssetLoader.groupChat} />
+          <div style={choiceTitle}> {"join a conversation"->Ru.s} </div>
+        </div>
+        <div style={ReactDOMRe.Style.combine(panel, backPanel)}>
+          <div style={enterId}> {"enter chat id"->Ru.s} </div>
+          <input
+            placeholder="id"
+            style={input}
+            onChange
+            onClick={e => e->ReactEvent.Mouse.stopPropagation}
+          />
+          <img style={enterBtnStyle} src={AssetLoader.arrow} onClick=enterClick />
+        </div>
+      </div>
     </div>
   }
 }

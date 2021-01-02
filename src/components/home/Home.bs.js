@@ -1,5 +1,6 @@
 'use strict';
 
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
@@ -33,6 +34,7 @@ var choice = {
   cursor: "pointer",
   display: "flex",
   height: "200px",
+  position: "relative",
   width: "200px",
   borderRadius: "10px",
   alignItems: "center",
@@ -56,6 +58,90 @@ var startConversationIcon = {
   marginLeft: "20px"
 };
 
+var joinConversationParent = {
+  height: "200px",
+  width: "200px",
+  perspective: "1000px"
+};
+
+var joinConversationWrapper = {
+  height: "100%",
+  position: "relative",
+  width: "100%",
+  transition: "transform 0.6s",
+  transformStyle: "preserve-3d"
+};
+
+var panel = {
+  background: "#fafafa",
+  border: "1px solid #ccc",
+  height: "100%",
+  padding: "0 10px",
+  position: "absolute",
+  width: "100%",
+  borderRadius: "10px",
+  backfaceVisibility: "hidden"
+};
+
+var frontPanel = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  justifyContent: "center"
+};
+
+var backPanel = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  justifyContent: "center",
+  transform: "rotateY(180deg)"
+};
+
+var enterId = {
+  fontSize: "1.1rem",
+  fontWeight: "600",
+  textAlign: "center",
+  width: "100%"
+};
+
+var input = {
+  background: "transparent",
+  border: "none",
+  borderBottom: "2px solid #3a7bd5",
+  color: "black",
+  fontSize: "26px",
+  marginTop: "5px",
+  outline: "none",
+  textAlign: "center",
+  width: "100%",
+  opacity: "0.70"
+};
+
+var active = {
+  transform: "rotateY(180deg)"
+};
+
+var enterBtn = {
+  background: "linear-gradient(0deg, #00d2ff, #3a7bd5)",
+  cursor: "none",
+  height: "35px",
+  marginTop: "10px",
+  padding: "10px",
+  width: "35px",
+  opacity: "0.2",
+  borderRadius: "50%",
+  transition: "0.2s ease-out all",
+  transform: "rotate(180deg)",
+  pointerEvents: "none"
+};
+
+var enterBtnActive = {
+  cursor: "pointer",
+  opacity: "1",
+  pointerEvents: "all"
+};
+
 var Style = {
   parent: parent,
   title: title,
@@ -64,7 +150,17 @@ var Style = {
   choice: choice,
   choiceTitle: choiceTitle,
   choiceIcon: choiceIcon,
-  startConversationIcon: startConversationIcon
+  startConversationIcon: startConversationIcon,
+  joinConversationParent: joinConversationParent,
+  joinConversationWrapper: joinConversationWrapper,
+  panel: panel,
+  frontPanel: frontPanel,
+  backPanel: backPanel,
+  enterId: enterId,
+  input: input,
+  active: active,
+  enterBtn: enterBtn,
+  enterBtnActive: enterBtnActive
 };
 
 function Home$StartNewConvesation(Props) {
@@ -83,14 +179,63 @@ var StartNewConvesation = {
 };
 
 function Home$JoinConvesation(Props) {
+  var match = React.useState(function () {
+        return false;
+      });
+  var setActive = match[1];
+  var match$1 = React.useState(function () {
+        return "";
+      });
+  var setId = match$1[1];
+  var joinConversationStyle = match[0] ? Object.assign({}, joinConversationWrapper, active) : joinConversationWrapper;
+  var enterBtnStyle = match$1[0].trim().length < 5 ? enterBtn : Object.assign({}, enterBtn, enterBtnActive);
+  var onClick = function (e) {
+    e.stopPropagation();
+    return Curry._1(setActive, (function (active) {
+                  return !active;
+                }));
+  };
+  var onChange = function (e) {
+    e.stopPropagation();
+    var target = e.target;
+    var value = target.value.trim();
+    return Curry._1(setId, (function (param) {
+                  return value;
+                }));
+  };
+  var enterClick = function (e) {
+    e.stopPropagation();
+    
+  };
   return React.createElement("div", {
-              style: choice
-            }, React.createElement("img", {
-                  style: choiceIcon,
-                  src: AssetLoader$Yap.groupChat
-                }), React.createElement("div", {
-                  style: choiceTitle
-                }, Ru$Yap.s("join a conversation")));
+              style: joinConversationParent
+            }, React.createElement("div", {
+                  style: joinConversationStyle,
+                  onClick: onClick
+                }, React.createElement("div", {
+                      style: Object.assign({}, panel, frontPanel)
+                    }, React.createElement("img", {
+                          style: choiceIcon,
+                          src: AssetLoader$Yap.groupChat
+                        }), React.createElement("div", {
+                          style: choiceTitle
+                        }, Ru$Yap.s("join a conversation"))), React.createElement("div", {
+                      style: Object.assign({}, panel, backPanel)
+                    }, React.createElement("div", {
+                          style: enterId
+                        }, Ru$Yap.s("enter chat id")), React.createElement("input", {
+                          style: input,
+                          placeholder: "id",
+                          onChange: onChange,
+                          onClick: (function (e) {
+                              e.stopPropagation();
+                              
+                            })
+                        }), React.createElement("img", {
+                          style: enterBtnStyle,
+                          src: AssetLoader$Yap.arrow,
+                          onClick: enterClick
+                        }))));
 }
 
 var JoinConvesation = {
