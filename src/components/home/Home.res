@@ -33,13 +33,9 @@ module Style = {
     ~marginTop="5px",
     (),
   )
-
   let choiceIcon = make(~width="100px", ())
-
   let startConversationIcon = make(~marginLeft="20px", ())
-
   let joinConversationParent = make(~perspective="1000px", ~width="200px", ~height="200px", ())
-
   let joinConversationWrapper = make(
     ~position="relative",
     ~width="100%",
@@ -66,7 +62,6 @@ module Style = {
     ~justifyContent="center",
     (),
   )
-
   let backPanel = make(
     ~transform="rotateY(180deg)",
     ~display="flex",
@@ -75,9 +70,7 @@ module Style = {
     ~alignItems="center",
     (),
   )
-
   let enterId = make(~width="100%", ~textAlign="center", ~fontSize="1.1rem", ~fontWeight="600", ())
-
   let input = make(
     ~border="none",
     ~outline="none",
@@ -91,9 +84,7 @@ module Style = {
     ~marginTop="5px",
     (),
   )
-
   let active = make(~transform="rotateY(180deg)", ())
-
   let enterBtn = make(
     ~borderRadius="50%",
     ~background="linear-gradient(0deg, #00d2ff, #3a7bd5)",
@@ -108,7 +99,6 @@ module Style = {
     ~opacity="0.2",
     (),
   )
-
   let enterBtnActive = make(~cursor="pointer", ~pointerEvents="all", ~opacity="1", ())
 }
 

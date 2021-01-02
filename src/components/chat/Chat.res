@@ -1,6 +1,5 @@
 module Style = {
   open ReactDOMRe.Style
-
   let parent = make(~display="flex", ~flexDirection="column", ~height="100vh", ~padding="10px", ())
   let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1", ())
 

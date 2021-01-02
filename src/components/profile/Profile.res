@@ -61,18 +61,14 @@ module Style = {
     ~padding="20px",
     (),
   )
-
   let enterBtnActive = make(
     ~transform="scale(1) rotate(180deg)",
     ~pointerEvents="all",
     ~opacity="1",
     (),
   )
-
   let avatarParent = make(~display="flex", ~flexDirection="column", ())
-
   let avatarTitle = make(~fontSize="4rem", ())
-
   let avatarList = make(
     ~display="grid",
     ~gridTemplateColumns="auto auto auto auto auto",
@@ -81,7 +77,6 @@ module Style = {
     ~paddingLeft="50px",
     (),
   )
-
   let avatarItem = make(
     ~display="flex",
     ~width="100px",
@@ -94,10 +89,8 @@ module Style = {
     ~border="2px solid transparent",
     (),
   )
-
   let avatarSelected = make(~border="2px solid #3a7bd5", ())
   let avatarImg = make(~width="70px", ())
-
   let avatarWrapperActive = make(~opacity="1", ())
   let avatarWrapper = make(~opacity="0", ~transition="0.3s ease-out all", ())
 }
