@@ -4,8 +4,10 @@ var React = require("react");
 var Ru$Yap = require("./utils/ru.bs.js");
 var Chat$Yap = require("./components/chat/Chat.bs.js");
 var Home$Yap = require("./components/home/Home.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Profile$Yap = require("./components/profile/Profile.bs.js");
 var AssetLoader$Yap = require("./utils/assetLoader.bs.js");
+var UserDetails$Yap = require("./data/userDetails.bs.js");
 var PageNotFound$Yap = require("./components/pageNotFound/PageNotFound.bs.js");
 var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 
@@ -83,39 +85,69 @@ var LeftSection = {
 function App(Props) {
   var url = ReasonReactRouter.useUrl(undefined, undefined);
   var match = url.path;
-  var body;
-  var exit = 0;
-  if (match) {
-    switch (match.hd) {
-      case "chat" :
-          if (match.tl) {
-            exit = 1;
-          } else {
-            body = React.createElement(Chat$Yap.make, {});
-          }
-          break;
-      case "home" :
-          if (match.tl) {
-            exit = 1;
-          } else {
-            body = React.createElement(Home$Yap.make, {});
-          }
-          break;
-      case "profile" :
-          if (match.tl) {
-            exit = 1;
-          } else {
-            body = React.createElement(Profile$Yap.make, {});
-          }
-          break;
-      default:
-        exit = 1;
-    }
+  var pendingRoute;
+  if (match && match.hd === "chat" && !match.tl) {
+    var chatId = Belt_Array.getBy(url.search.split("&"), (function (it) {
+            return it.startsWith("id=");
+          }));
+    pendingRoute = chatId !== undefined ? /* Chat */({
+          _0: chatId.substring(chatId.indexOf("=") + 1 | 0)
+        }) : /* Home */0;
   } else {
-    body = React.createElement(Profile$Yap.make, {});
+    pendingRoute = /* Home */0;
   }
-  if (exit === 1) {
-    body = React.createElement(PageNotFound$Yap.make, {});
+  var onSubmit = function (param) {
+    if (pendingRoute) {
+      return ReasonReactRouter.push("/chat?id=" + pendingRoute._0);
+    } else {
+      console.log("going home");
+      return ReasonReactRouter.push("/home");
+    }
+  };
+  var match$1 = url.path;
+  var body;
+  if (UserDetails$Yap.isLoggedIn) {
+    var exit = 0;
+    if (match$1) {
+      switch (match$1.hd) {
+        case "chat" :
+            if (match$1.tl) {
+              exit = 1;
+            } else {
+              body = pendingRoute ? React.createElement(Chat$Yap.make, {
+                      id: pendingRoute._0
+                    }) : React.createElement(Home$Yap.make, {});
+            }
+            break;
+        case "home" :
+            if (match$1.tl) {
+              exit = 1;
+            } else {
+              console.log("moving home");
+              body = React.createElement(Home$Yap.make, {});
+            }
+            break;
+        case "profile" :
+            if (match$1.tl) {
+              exit = 1;
+            } else {
+              body = React.createElement(Home$Yap.make, {});
+            }
+            break;
+        default:
+          exit = 1;
+      }
+    } else {
+      body = React.createElement(Home$Yap.make, {});
+    }
+    if (exit === 1) {
+      body = React.createElement(PageNotFound$Yap.make, {});
+    }
+    
+  } else {
+    body = React.createElement(Profile$Yap.make, {
+          onSubmit: onSubmit
+        });
   }
   return React.createElement("div", {
               style: parent

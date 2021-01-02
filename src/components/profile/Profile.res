@@ -133,7 +133,7 @@ module Avatar = {
 }
 
 @react.component
-let make = () => {
+let make = (~onSubmit: unit => unit) => {
   let (title, setTitle) = React.useState(() => "")
   let (name, setName) = React.useState(() => "")
   let (selectedAvatar, selectAvatar) = React.useState(() => -1)
@@ -192,7 +192,7 @@ let make = () => {
     Js.Date.now()->string_of_float->UserDetails.saveUserId
     name->UserDetails.saveUsername
     AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar)->UserDetails.saveAvatar
-    ReasonReactRouter.push("/home")
+    onSubmit()
   }
 
   let avatarLayoutStyle = {
@@ -202,6 +202,7 @@ let make = () => {
       Style.avatarWrapper
     }
   }
+
   open Style
   <div style={parent}>
     <div style={centerWrapper}>

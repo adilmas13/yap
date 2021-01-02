@@ -17,3 +17,5 @@ let saveUserId = (id: string) => {
   | Some(_) => ()
   }
 }
+
+let isLoggedIn = Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.isSome

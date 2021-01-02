@@ -148,7 +148,7 @@ module Body = {
 }
 
 @react.component
-let make = () => {
+let make = (~id:string) => {
   open Style
   <div style={parent}> <Body /> <ChatInput /> </div>
 }

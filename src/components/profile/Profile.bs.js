@@ -7,7 +7,6 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
-var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
 var parent = {
@@ -196,6 +195,7 @@ var Avatar = {
 };
 
 function Profile(Props) {
+  var onSubmit = Props.onSubmit;
   var match = React.useState(function () {
         return "";
       });
@@ -254,7 +254,7 @@ function Profile(Props) {
     UserDetails$Yap.saveUserId(Pervasives.string_of_float(Date.now()));
     UserDetails$Yap.saveUsername(name);
     UserDetails$Yap.saveAvatar(AvatarCollection$Yap.avatars[selectedAvatar]);
-    return ReasonReactRouter.push("/home");
+    return Curry._1(onSubmit, undefined);
   };
   var avatarLayoutStyle = name.length > 0 ? Object.assign({}, avatarWrapper, avatarWrapperActive) : avatarWrapper;
   return React.createElement("div", {

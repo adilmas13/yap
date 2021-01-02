@@ -1,5 +1,7 @@
 'use strict';
 
+var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
 
 var username = "username";
 
@@ -32,8 +34,11 @@ function saveUserId(id) {
   
 }
 
+var isLoggedIn = Belt_Option.isSome(Caml_option.nullable_to_opt(localStorage.getItem(userId)));
+
 exports.Constants = Constants;
 exports.saveUsername = saveUsername;
 exports.saveAvatar = saveAvatar;
 exports.saveUserId = saveUserId;
-/* No side effect */
+exports.isLoggedIn = isLoggedIn;
+/* isLoggedIn Not a pure module */

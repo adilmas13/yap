@@ -42,15 +42,51 @@ module LeftSection = {
   }
 }
 
+type pendingRoute = Chat(string) | Home
+
 @react.component
 let make = () => {
   let url = ReasonReactRouter.useUrl()
-  let body = switch url.path {
-  | list{}
-  | list{"profile"} =>
-    <Profile />
-  | list{"home"} => <Home />
-  | list{"chat"} => <Chat />
+
+  let pendingRoute = {
+    switch url.path {
+    | list{"chat"} => {
+        let chatId =
+          url.search
+          ->Js.String2.split("&")
+          ->Belt.Array.getBy(it => it->Js.String2.startsWith("id="))
+        switch chatId {
+        | Some(value) =>
+          value->Js.String2.substringToEnd(~from=value->Js.String2.indexOf("=") + 1)->Chat
+        | None => Home
+        }
+      }
+    | _ => Home
+    }
+  }
+
+  let onSubmit = () => {
+    switch pendingRoute {
+    | Home => {
+        Js.log("going home")
+        ReasonReactRouter.push("/home")
+      }
+    | Chat(id) => ReasonReactRouter.push(j`/chat?id=${id}`)
+    }
+  }
+
+  let body = switch (UserDetails.isLoggedIn, url.path, pendingRoute) {
+  | (false, _, _) => <Profile onSubmit />
+  | (true, list{}, _)
+  | (true, list{"profile"}, _) =>
+    <Home />
+  | (true, list{"home"}, _) => {
+      Js.log("moving home")
+      <Home />
+    }
+  | (true, list{"chat"}, Home) => <Home />
+  | (true, list{"chat"}, Chat(id)) => <Chat id />
+  | (true, _, _) => <PageNotFound />
   | _ => <PageNotFound />
   }
 
