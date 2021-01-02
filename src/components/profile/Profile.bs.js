@@ -4,8 +4,10 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
+var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
 var parent = {
@@ -249,8 +251,10 @@ function Profile(Props) {
   };
   var onClick = function (e) {
     e.stopPropagation();
+    UserDetails$Yap.saveUserId(Pervasives.string_of_float(Date.now()));
     UserDetails$Yap.saveUsername(name);
-    return UserDetails$Yap.saveAvatar(AvatarCollection$Yap.avatars[selectedAvatar]);
+    UserDetails$Yap.saveAvatar(AvatarCollection$Yap.avatars[selectedAvatar]);
+    return ReasonReactRouter.push("/home");
   };
   var avatarLayoutStyle = name.length > 0 ? Object.assign({}, avatarWrapper, avatarWrapperActive) : avatarWrapper;
   return React.createElement("div", {

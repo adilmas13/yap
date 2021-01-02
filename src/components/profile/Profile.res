@@ -189,8 +189,10 @@ let make = () => {
 
   let onClick = (e: ReactEvent.Mouse.t): unit => {
     e->ReactEvent.Mouse.stopPropagation
-    UserDetails.saveUsername(name)
-    UserDetails.saveAvatar(AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar))
+    Js.Date.now()->string_of_float->UserDetails.saveUserId
+    name->UserDetails.saveUsername
+    AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar)->UserDetails.saveAvatar
+    ReasonReactRouter.push("/home")
   }
 
   let avatarLayoutStyle = {
