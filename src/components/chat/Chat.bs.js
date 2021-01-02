@@ -1,5 +1,6 @@
 'use strict';
 
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 
@@ -41,16 +42,24 @@ var enterBtn = {
   height: "50px",
   padding: "10px",
   width: "50px",
+  opacity: "0.2",
   borderRadius: "50%",
   transition: "0.2s ease-out all",
   transform: "rotate(45deg)",
   pointerEvents: "none"
 };
 
+var enterBtnActive = {
+  cursor: "pointer",
+  opacity: "1",
+  pointerEvents: "all"
+};
+
 var ChatInputStyle = {
   chatInputParent: chatInputParent,
   input: input,
-  enterBtn: enterBtn
+  enterBtn: enterBtn,
+  enterBtnActive: enterBtnActive
 };
 
 var Style = {
@@ -60,14 +69,44 @@ var Style = {
 };
 
 function Chat$ChatInput(Props) {
+  var match = React.useState(function () {
+        return "";
+      });
+  var setMessage = match[1];
+  var message = match[0];
+  var sendBtnStyle = message.trim().length > 0 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
+  var sendMessage = function (param) {
+    message.trim().length > 0;
+    
+  };
+  var onChange = function (e) {
+    e.stopPropagation();
+    var target = e.target;
+    return Curry._1(setMessage, (function (param) {
+                  return target.value;
+                }));
+  };
+  var onKeyDown = function (e) {
+    e.stopPropagation();
+    var key = e.keyCode;
+    if (key === 13) {
+      return sendMessage(undefined);
+    }
+    
+  };
   return React.createElement("div", {
               style: chatInputParent
             }, React.createElement("input", {
                   style: input,
-                  placeholder: "type a message.."
+                  placeholder: "type a message..",
+                  onKeyDown: onKeyDown,
+                  onChange: onChange
                 }), React.createElement("img", {
-                  style: enterBtn,
-                  src: AssetLoader$Yap.send
+                  style: sendBtnStyle,
+                  src: AssetLoader$Yap.send,
+                  onClick: (function (param) {
+                      return sendMessage(undefined);
+                    })
                 }));
 }
 

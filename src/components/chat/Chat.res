@@ -36,8 +36,11 @@ module Style = {
       ~pointerEvents="none",
       ~padding="10px",
       ~transform="rotate(45deg)",
+      ~opacity="0.2",
       (),
     )
+
+    let enterBtnActive = make(~cursor="pointer", ~pointerEvents="all", ~opacity="1", ())
   }
 }
 
@@ -45,8 +48,40 @@ module ChatInput = {
   open Style.ChatInputStyle
   @react.component
   let make = () => {
+    let (message, setMessage) = React.useState(() => "")
+
+    let sendBtnStyle = {
+      switch message->Js.String2.trim->Js.String2.length > 0 {
+      | true =>
+        ReactDOMRe.Style.combine(Style.ChatInputStyle.enterBtn, Style.ChatInputStyle.enterBtnActive)
+      | false => Style.ChatInputStyle.enterBtn
+      }
+    }
+
+    let sendMessage = () => {
+      if message->Js.String2.trim->Js.String2.length > 0 {
+        // TODO: send message implementation
+        ()
+      }
+    }
+
+    let onChange = (e: ReactEvent.Form.t): unit => {
+      e->ReactEvent.Form.stopPropagation
+      let target = e->ReactEvent.Form.target
+      setMessage(_ => target["value"])
+    }
+
+    let onKeyDown = (e: ReactEvent.Keyboard.t) => {
+      e->ReactEvent.Keyboard.stopPropagation
+      let key = e->ReactEvent.Keyboard.keyCode
+      if key == 13 {
+        sendMessage()
+      }
+    }
+
     <div style={chatInputParent}>
-      <input placeholder="type a message.." style={input} /> <img src={AssetLoader.send} style={enterBtn} />
+      <input placeholder="type a message.." style={input} onChange onKeyDown />
+      <img src={AssetLoader.send} style={sendBtnStyle} onClick={_ => sendMessage()} />
     </div>
   }
 }
