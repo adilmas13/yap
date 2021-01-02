@@ -2,7 +2,9 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Ru$Yap = require("../../utils/ru.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
+var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
 var parent = {
   display: "flex",
@@ -31,7 +33,7 @@ var input = {
   height: "50px",
   marginRight: "10px",
   outline: "none",
-  padding: "0 15px",
+  padding: "0 25px",
   borderRadius: "100px",
   flex: "1"
 };
@@ -62,10 +64,62 @@ var ChatInputStyle = {
   enterBtnActive: enterBtnActive
 };
 
+var rightParent = {
+  display: "flex",
+  marginBottom: "5px",
+  justifyContent: "flex-end"
+};
+
+var rightBubble = {
+  background: "linear-gradient(20deg, #00d2ff, #3a7bd5)",
+  color: "#ffffff",
+  padding: "5px 20px",
+  width: "fit-content",
+  borderRadius: "20px"
+};
+
+var leftParent = {
+  display: "flex",
+  marginBottom: "5px"
+};
+
+var leftBubble = {
+  background: "#e5e5e5",
+  color: "#000000",
+  display: "flex",
+  padding: "5px 20px",
+  width: "fit-content",
+  borderRadius: "20px",
+  flexDirection: "column"
+};
+
+var userName = {
+  color: "#3a7bd5",
+  fontSize: "12px",
+  fontWeight: "600"
+};
+
+var userImage = {
+  height: "35px",
+  marginRight: "10px",
+  width: "35px",
+  borderRadius: "50%"
+};
+
+var ChatBubbleStyle = {
+  rightParent: rightParent,
+  rightBubble: rightBubble,
+  leftParent: leftParent,
+  leftBubble: leftBubble,
+  userName: userName,
+  userImage: userImage
+};
+
 var Style = {
   parent: parent,
   bodyParent: bodyParent,
-  ChatInputStyle: ChatInputStyle
+  ChatInputStyle: ChatInputStyle,
+  ChatBubbleStyle: ChatBubbleStyle
 };
 
 function Chat$ChatInput(Props) {
@@ -114,10 +168,39 @@ var ChatInput = {
   make: Chat$ChatInput
 };
 
+function Chat$MyChatBubble(Props) {
+  return React.createElement("div", {
+              style: rightParent
+            }, React.createElement("div", {
+                  style: rightBubble
+                }, Ru$Yap.s("message")));
+}
+
+var MyChatBubble = {
+  make: Chat$MyChatBubble
+};
+
+function Chat$OtherChatBubble(Props) {
+  return React.createElement("div", {
+              style: leftParent
+            }, React.createElement("img", {
+                  style: userImage,
+                  src: AvatarCollection$Yap.avatars[0]
+                }), React.createElement("div", {
+                  style: leftBubble
+                }, React.createElement("div", {
+                      style: userName
+                    }, Ru$Yap.s("adil shaikh")), Ru$Yap.s("message")));
+}
+
+var OtherChatBubble = {
+  make: Chat$OtherChatBubble
+};
+
 function Chat$Body(Props) {
   return React.createElement("div", {
               style: bodyParent
-            });
+            }, React.createElement(Chat$MyChatBubble, {}), React.createElement(Chat$OtherChatBubble, {}));
 }
 
 var Body = {
@@ -134,6 +217,8 @@ var make = Chat;
 
 exports.Style = Style;
 exports.ChatInput = ChatInput;
+exports.MyChatBubble = MyChatBubble;
+exports.OtherChatBubble = OtherChatBubble;
 exports.Body = Body;
 exports.make = make;
 /* react Not a pure module */

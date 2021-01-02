@@ -20,7 +20,7 @@ module Style = {
       ~background="#e6e6e6",
       ~marginRight="10px",
       ~height="50px",
-      ~padding="0 15px",
+      ~padding="0 25px",
       ~fontSize="16px",
       (),
     )
@@ -40,6 +40,39 @@ module Style = {
     )
 
     let enterBtnActive = make(~cursor="pointer", ~pointerEvents="all", ~opacity="1", ())
+  }
+
+  module ChatBubbleStyle = {
+    let rightParent = make(~display="flex", ~justifyContent="flex-end", ~marginBottom="5px", ())
+    let rightBubble = make(
+      ~padding="5px 20px",
+      ~borderRadius="20px",
+      ~background="linear-gradient(20deg, #00d2ff, #3a7bd5)",
+      ~width="fit-content",
+      ~color="#ffffff",
+      (),
+    )
+
+    let leftParent = make(~display="flex", ~marginBottom="5px", ())
+    let leftBubble = make(
+      ~display="flex",
+      ~flexDirection="column",
+      ~padding="5px 20px",
+      ~borderRadius="20px",
+      ~background="#e5e5e5",
+      ~width="fit-content",
+      ~color="#000000",
+      (),
+    )
+
+    let userName = make(~fontSize="12px", ~fontWeight="600", ~color="#3a7bd5", ())
+    let userImage = make(
+      ~width="35px",
+      ~height="35px",
+      ~borderRadius="50%",
+      ~marginRight="10px",
+      (),
+    )
   }
 }
 
@@ -85,13 +118,35 @@ module ChatInput = {
   }
 }
 
+module MyChatBubble = {
+  open Style.ChatBubbleStyle
+  @react.component
+  let make = () => {
+    <div style={rightParent}> <div style={rightBubble}> {"message"->Ru.s} </div> </div>
+  }
+}
+
+module OtherChatBubble = {
+  open Style.ChatBubbleStyle
+  @react.component
+  let make = () => {
+    <div style={leftParent}>
+      <img style={userImage} src={AvatarCollection.avatars->Belt.Array.getUnsafe(0)} />
+      <div style={leftBubble}>
+        <div style={userName}> {"adil shaikh"->Ru.s} </div> {"message"->Ru.s}
+      </div>
+    </div>
+  }
+}
+
 module Body = {
   open Style
   @react.component
   let make = () => {
-    <div style={bodyParent} />
+    <div style={bodyParent}> <MyChatBubble /> <OtherChatBubble /> </div>
   }
 }
+
 @react.component
 let make = () => {
   open Style
