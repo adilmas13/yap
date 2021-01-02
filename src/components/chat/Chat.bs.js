@@ -3,6 +3,7 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
+var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
 
@@ -123,6 +124,7 @@ var Style = {
 };
 
 function Chat$ChatInput(Props) {
+  var id = Props.id;
   var match = React.useState(function () {
         return "";
       });
@@ -130,7 +132,9 @@ function Chat$ChatInput(Props) {
   var message = match[0];
   var sendBtnStyle = message.trim().length > 0 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
   var sendMessage = function (param) {
-    message.trim().length > 0;
+    if (message.trim().length > 0) {
+      return ChatEngine$Yap.sendMessage(message, id);
+    }
     
   };
   var onChange = function (e) {
@@ -208,9 +212,12 @@ var Body = {
 };
 
 function Chat(Props) {
+  var id = Props.id;
   return React.createElement("div", {
               style: parent
-            }, React.createElement(Chat$Body, {}), React.createElement(Chat$ChatInput, {}));
+            }, React.createElement(Chat$Body, {}), React.createElement(Chat$ChatInput, {
+                  id: id
+                }));
 }
 
 var make = Chat;

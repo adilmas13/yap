@@ -84,6 +84,7 @@ var panel = {
 };
 
 var frontPanel = {
+  cursor: "pointer",
   display: "flex",
   alignItems: "center",
   flexDirection: "column",
@@ -91,6 +92,7 @@ var frontPanel = {
 };
 
 var backPanel = {
+  cursor: "pointer",
   display: "flex",
   alignItems: "center",
   flexDirection: "column",

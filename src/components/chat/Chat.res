@@ -79,7 +79,7 @@ module Style = {
 module ChatInput = {
   open Style.ChatInputStyle
   @react.component
-  let make = () => {
+  let make = (~id) => {
     let (message, setMessage) = React.useState(() => "")
 
     let sendBtnStyle = {
@@ -92,8 +92,7 @@ module ChatInput = {
 
     let sendMessage = () => {
       if message->Js.String2.trim->Js.String2.length > 0 {
-        // TODO: send message implementation
-        ()
+        message->ChatEngine.sendMessage(id)
       }
     }
 
@@ -150,7 +149,7 @@ module Body = {
 @react.component
 let make = (~id:string) => {
   open Style
-  <div style={parent}> <Body /> <ChatInput /> </div>
+  <div style={parent}> <Body /> <ChatInput id /> </div>
 }
 
 /*

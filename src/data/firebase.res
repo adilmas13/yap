@@ -52,9 +52,13 @@ module Firestore = {
 
   @bs.send external collection: (t, string) => collection = "collection"
 
+  @bs.send external collection1: (DocRef.t, string) => collection = "collection"
+
   @bs.send external add: (collection, 'a) => Js.Promise.t<DocRef.t> = "add"
 
   @bs.send external doc: (collection, string) => DocRef.t = "doc"
+
+  @bs.send external set: (DocRef.t, 'a) => Js.Promise.t<unit> = "set"
 
   @bs.send external onSnapshot: (DocRef.t, DocRef.t => unit) => unit = "onSnapshot"
 }

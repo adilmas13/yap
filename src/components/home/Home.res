@@ -60,6 +60,7 @@ module Style = {
     ~flexDirection="column",
     ~alignItems="center",
     ~justifyContent="center",
+    ~cursor="pointer",
     (),
   )
   let backPanel = make(
@@ -68,6 +69,7 @@ module Style = {
     ~flexDirection="column",
     ~justifyContent="center",
     ~alignItems="center",
+    ~cursor="pointer",
     (),
   )
   let enterId = make(~width="100%", ~textAlign="center", ~fontSize="1.1rem", ~fontWeight="600", ())
