@@ -185,6 +185,7 @@ module JoinConvesation = {
     </div>
   }
 }
+
 @react.component
 let make = () => {
   open Style
