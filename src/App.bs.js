@@ -100,7 +100,6 @@ function App(Props) {
     if (pendingRoute) {
       return ReasonReactRouter.push("/chat?id=" + pendingRoute._0);
     } else {
-      console.log("going home");
       return ReasonReactRouter.push("/home");
     }
   };
@@ -120,13 +119,6 @@ function App(Props) {
             }
             break;
         case "home" :
-            if (match$1.tl) {
-              exit = 1;
-            } else {
-              console.log("moving home");
-              body = React.createElement(Home$Yap.make, {});
-            }
-            break;
         case "profile" :
             if (match$1.tl) {
               exit = 1;

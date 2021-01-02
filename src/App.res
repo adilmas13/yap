@@ -67,11 +67,8 @@ let make = () => {
 
   let onSubmit = () => {
     switch pendingRoute {
-    | Home => {
-        Js.log("going home")
-        ReasonReactRouter.push("/home")
-      }
-    | Chat(id) => ReasonReactRouter.push(j`/chat?id=${id}`)
+    | Home => ReasonReactRouter.push("/home")
+    | Chat(id) => ReasonReactRouter.push("/chat?id=" ++ id)
     }
   }
 
@@ -80,10 +77,7 @@ let make = () => {
   | (true, list{}, _)
   | (true, list{"profile"}, _) =>
     <Home />
-  | (true, list{"home"}, _) => {
-      Js.log("moving home")
-      <Home />
-    }
+  | (true, list{"home"}, _) => <Home />
   | (true, list{"chat"}, Home) => <Home />
   | (true, list{"chat"}, Chat(id)) => <Chat id />
   | (true, _, _) => <PageNotFound />
