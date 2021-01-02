@@ -34,11 +34,13 @@ function saveUserId(id) {
   
 }
 
-var isLoggedIn = Belt_Option.isSome(Caml_option.nullable_to_opt(localStorage.getItem(userId)));
+function isLoggedIn(param) {
+  return Belt_Option.isSome(Caml_option.nullable_to_opt(localStorage.getItem(userId)));
+}
 
 exports.Constants = Constants;
 exports.saveUsername = saveUsername;
 exports.saveAvatar = saveAvatar;
 exports.saveUserId = saveUserId;
 exports.isLoggedIn = isLoggedIn;
-/* isLoggedIn Not a pure module */
+/* No side effect */

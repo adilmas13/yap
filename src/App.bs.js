@@ -103,14 +103,15 @@ function App(Props) {
       return ReasonReactRouter.push("/home");
     }
   };
-  var match$1 = url.path;
+  var match$1 = UserDetails$Yap.isLoggedIn(undefined);
+  var match$2 = url.path;
   var body;
-  if (UserDetails$Yap.isLoggedIn) {
+  if (match$1) {
     var exit = 0;
-    if (match$1) {
-      switch (match$1.hd) {
+    if (match$2) {
+      switch (match$2.hd) {
         case "chat" :
-            if (match$1.tl) {
+            if (match$2.tl) {
               exit = 1;
             } else {
               body = pendingRoute ? React.createElement(Chat$Yap.make, {
@@ -120,7 +121,7 @@ function App(Props) {
             break;
         case "home" :
         case "profile" :
-            if (match$1.tl) {
+            if (match$2.tl) {
               exit = 1;
             } else {
               body = React.createElement(Home$Yap.make, {});

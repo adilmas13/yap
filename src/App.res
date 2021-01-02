@@ -72,7 +72,7 @@ let make = () => {
     }
   }
 
-  let body = switch (UserDetails.isLoggedIn, url.path, pendingRoute) {
+  let body = switch (UserDetails.isLoggedIn(), url.path, pendingRoute) {
   | (false, _, _) => <Profile onSubmit />
   | (true, list{}, _)
   | (true, list{"profile"}, _) =>
