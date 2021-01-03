@@ -48,7 +48,7 @@ let listen = (doc: string) => {
   ->Firestore.limit(1)
   ->Firestore.onSnapshot1(querySnapshot => {
     querySnapshot -> Firestore.QuerySnapshot.forEach(doc => {
-        Js.log2("data", doc->Firestore.DocumentSnapshot.data())
+        Js.log2("data", doc->Firestore.DocumentSnapshot.data()->Message.decode->Message.message)
     })
   })
 }
