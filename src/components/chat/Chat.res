@@ -93,6 +93,7 @@ module ChatInput = {
     let sendMessage = () => {
       if message->Js.String2.trim->Js.String2.length > 0 {
         message->ChatEngine.sendMessage(id)
+        setMessage(_ => "")
       }
     }
 
@@ -111,7 +112,7 @@ module ChatInput = {
     }
 
     <div style={chatInputParent}>
-      <input placeholder="type a message.." style={input} onChange onKeyDown />
+      <input placeholder="type a message.." style={input} value={message} onChange onKeyDown />
       <img src={AssetLoader.send} style={sendBtnStyle} onClick={_ => sendMessage()} />
     </div>
   }
@@ -141,15 +142,19 @@ module OtherChatBubble = {
 module Body = {
   open Style
   @react.component
-  let make = () => {
+  let make = (~id: string) => {
+    React.useEffect1(() => {
+      id->ChatEngine.listen
+      None
+    }, [])
     <div style={bodyParent}> <MyChatBubble /> <OtherChatBubble /> </div>
   }
 }
 
 @react.component
-let make = (~id:string) => {
+let make = (~id: string) => {
   open Style
-  <div style={parent}> <Body /> <ChatInput id /> </div>
+  <div style={parent}> <Body id /> <ChatInput id /> </div>
 }
 
 /*

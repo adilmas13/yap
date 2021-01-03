@@ -20,8 +20,17 @@ var FirebaseConfig = {
 
 var DocRef = {};
 
+var Query = {};
+
+var DocumentSnapshot = {};
+
+var QuerySnapshot = {};
+
 var Firestore = {
-  DocRef: DocRef
+  DocRef: DocRef,
+  Query: Query,
+  DocumentSnapshot: DocumentSnapshot,
+  QuerySnapshot: QuerySnapshot
 };
 
 var firebase = App.default;

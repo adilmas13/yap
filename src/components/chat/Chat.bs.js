@@ -133,7 +133,10 @@ function Chat$ChatInput(Props) {
   var sendBtnStyle = message.trim().length > 0 ? Object.assign({}, enterBtn, enterBtnActive) : enterBtn;
   var sendMessage = function (param) {
     if (message.trim().length > 0) {
-      return ChatEngine$Yap.sendMessage(message, id);
+      ChatEngine$Yap.sendMessage(message, id);
+      return Curry._1(setMessage, (function (param) {
+                    return "";
+                  }));
     }
     
   };
@@ -157,6 +160,7 @@ function Chat$ChatInput(Props) {
             }, React.createElement("input", {
                   style: input,
                   placeholder: "type a message..",
+                  value: message,
                   onKeyDown: onKeyDown,
                   onChange: onChange
                 }), React.createElement("img", {
@@ -202,6 +206,11 @@ var OtherChatBubble = {
 };
 
 function Chat$Body(Props) {
+  var id = Props.id;
+  React.useEffect((function () {
+          ChatEngine$Yap.listen(id);
+          
+        }), []);
   return React.createElement("div", {
               style: bodyParent
             }, React.createElement(Chat$MyChatBubble, {}), React.createElement(Chat$OtherChatBubble, {}));
@@ -215,7 +224,9 @@ function Chat(Props) {
   var id = Props.id;
   return React.createElement("div", {
               style: parent
-            }, React.createElement(Chat$Body, {}), React.createElement(Chat$ChatInput, {
+            }, React.createElement(Chat$Body, {
+                  id: id
+                }), React.createElement(Chat$ChatInput, {
                   id: id
                 }));
 }
