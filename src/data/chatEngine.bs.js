@@ -36,11 +36,16 @@ function sendMessage(message, doc) {
 }
 
 function listen(doc) {
-  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(50);
+  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(1);
+}
+
+function getLatestMessages(doc) {
+  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(10).get();
 }
 
 exports.Constants = Constants;
 exports.MessageRequest = MessageRequest;
 exports.sendMessage = sendMessage;
 exports.listen = listen;
+exports.getLatestMessages = getLatestMessages;
 /*  Not a pure module */

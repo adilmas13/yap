@@ -228,7 +228,7 @@ function Chat$Body(Props) {
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
   React.useEffect((function () {
-          ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
+          var unsubscribe = ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
                       return Curry._1(dispatch, /* NewMessage */{
                                   _0: Message$Yap.decode(doc.data())
@@ -236,7 +236,9 @@ function Chat$Body(Props) {
                     });
                 
               });
-          
+          return (function (param) {
+                    return Curry._1(unsubscribe, undefined);
+                  });
         }), []);
   return React.createElement("div", {
               style: bodyParent

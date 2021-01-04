@@ -45,5 +45,16 @@ let listen = (doc: string)=> {
     ->Firestore.doc(doc)
     ->Firestore.collection1(Constants.messages)
     ->Firestore.orderBy("timestamp", "asc")
-    ->Firestore.limit(50)
+    ->Firestore.limit(1)
+}
+
+let getLatestMessages = (doc: string) => {
+  firebase
+  ->firestore
+  ->Firestore.collection(Constants.chatRoom)
+  ->Firestore.doc(doc)
+  ->Firestore.collection1(Constants.messages)
+  ->Firestore.orderBy("timestamp", "asc")
+  ->Firestore.limit(10)
+  ->Firestore.get
 }

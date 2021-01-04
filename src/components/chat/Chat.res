@@ -1,7 +1,7 @@
 module Style = {
   open ReactDOMRe.Style
   let parent = make(~display="flex", ~flexDirection="column", ~height="100vh", ~padding="10px", ())
-  let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1",~overflow="scroll", ())
+  let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1", ~overflow="scroll", ())
 
   module ChatInputStyle = {
     let chatInputParent = make(
@@ -163,14 +163,15 @@ module Body = {
     let (state, dispatch) = React.useReducer(reducer, defaultState)
     React.useEffect1(() => {
       open Firebase
-      id
-      ->ChatEngine.listen
-      ->Firestore.onSnapshot1(querySnapshot => {
-        querySnapshot->Firestore.QuerySnapshot.forEach(doc => {
-          doc->Firestore.DocumentSnapshot.data()->Message.decode->NewMessage->dispatch
+      let unsubscribe =
+        id
+        ->ChatEngine.listen
+        ->Firestore.onSnapshot1(querySnapshot => {
+          querySnapshot->Firestore.QuerySnapshot.forEach(doc => {
+            doc->Firestore.DocumentSnapshot.data()->Message.decode->NewMessage->dispatch
+          })
         })
-      })
-      None
+      Some(() => unsubscribe())
     }, [])
     <div style={bodyParent}> {state.messages->Ru.map(message => <MyChatBubble message />)} </div>
   }

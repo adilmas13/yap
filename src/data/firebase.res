@@ -47,15 +47,26 @@ module Firestore = {
   module DocumentSnapshot = {
     type t;
     @bs.send external data: (t, unit) => 'a = "data"
+    @bs.get external id: t => 'a = "id"
   }
 
   module QuerySnapshot = {
     type t
     @bs.send external forEach: (t, DocumentSnapshot.t => unit) => unit = "forEach"
+
+    let mapDataTo = (t, callback: ('a, string) => 'b) => {
+      let result = ref([])
+      t->forEach(doc => {
+        let temp = callback(doc->DocumentSnapshot.data(), doc->DocumentSnapshot.id)
+        result := result.contents->Belt.Array.concat([temp])
+      })
+      result.contents
+    }
   }
 
   type t
   type collection
+  type snapshotReturn = unit => unit
 
   @bs.module external require: unit = "firebase/firestore"
   @bs.send external collection: (t, string) => collection = "collection"
@@ -65,8 +76,9 @@ module Firestore = {
   @bs.send external doc: (collection, string) => DocRef.t = "doc"
   @bs.send external orderBy: (collection, string, string) => Query.t = "orderBy"
   @bs.send external limit: (Query.t, int) => Query.t = "limit"
-  @bs.send external onSnapshot: (DocRef.t, QuerySnapshot.t => unit) => unit = "onSnapshot"
-  @bs.send external onSnapshot1: (Query.t, QuerySnapshot.t => unit) => unit = "onSnapshot"
+  @bs.send external onSnapshot: (DocRef.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
+  @bs.send external onSnapshot1: (Query.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
+  @bs.send external get: (Query.t) => Js.Promise.t<QuerySnapshot.t> = "get"
 }
 
 @bs.module external _firebase: obj = "firebase/app"
