@@ -38,17 +38,12 @@ let sendMessage = (message: string, doc: string) => {
   ->ignore
 }
 
-let listen = (doc: string) => {
-  firebase
-  ->firestore
-  ->Firestore.collection(Constants.chatRoom)
-  ->Firestore.doc(doc)
-  ->Firestore.collection1(Constants.messages)
-  ->Firestore.orderBy("timestamp", "desc")
-  ->Firestore.limit(1)
-  ->Firestore.onSnapshot1(querySnapshot => {
-    querySnapshot -> Firestore.QuerySnapshot.forEach(doc => {
-        Js.log2("data", doc->Firestore.DocumentSnapshot.data()->Message.decode->Message.message)
-    })
-  })
+let listen = (doc: string)=> {
+    firebase
+    ->firestore
+    ->Firestore.collection(Constants.chatRoom)
+    ->Firestore.doc(doc)
+    ->Firestore.collection1(Constants.messages)
+    ->Firestore.orderBy("timestamp", "asc")
+    ->Firestore.limit(50)
 }

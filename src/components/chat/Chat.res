@@ -1,7 +1,7 @@
 module Style = {
   open ReactDOMRe.Style
   let parent = make(~display="flex", ~flexDirection="column", ~height="100vh", ~padding="10px", ())
-  let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1", ())
+  let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1",~overflow="scroll", ())
 
   module ChatInputStyle = {
     let chatInputParent = make(
@@ -121,8 +121,10 @@ module ChatInput = {
 module MyChatBubble = {
   open Style.ChatBubbleStyle
   @react.component
-  let make = () => {
-    <div style={rightParent}> <div style={rightBubble}> {"message"->Ru.s} </div> </div>
+  let make = (~message: Message.t) => {
+    <div style={rightParent}>
+      <div style={rightBubble}> {message->Message.message->Ru.s} </div>
+    </div>
   }
 }
 
@@ -140,14 +142,37 @@ module OtherChatBubble = {
 }
 
 module Body = {
+  type action = Loading | NewMessage(Message.t)
+
+  type state = {messages: array<Message.t>}
+
+  let defaultState: state = {
+    messages: [],
+  }
+
+  let reducer = (state: state, action: action) => {
+    switch action {
+    | Loading => state
+    | NewMessage(message) => {...state, messages: state.messages->Belt.Array.concat([message])}
+    }
+  }
+
   open Style
   @react.component
   let make = (~id: string) => {
+    let (state, dispatch) = React.useReducer(reducer, defaultState)
     React.useEffect1(() => {
-      id->ChatEngine.listen
+      open Firebase
+      id
+      ->ChatEngine.listen
+      ->Firestore.onSnapshot1(querySnapshot => {
+        querySnapshot->Firestore.QuerySnapshot.forEach(doc => {
+          doc->Firestore.DocumentSnapshot.data()->Message.decode->NewMessage->dispatch
+        })
+      })
       None
     }, [])
-    <div style={bodyParent}> <MyChatBubble /> <OtherChatBubble /> </div>
+    <div style={bodyParent}> {state.messages->Ru.map(message => <MyChatBubble message />)} </div>
   }
 }
 

@@ -3,6 +3,8 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var Message$Yap = require("../../data/message.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
@@ -16,6 +18,7 @@ var parent = {
 
 var bodyParent = {
   display: "flex",
+  overflow: "scroll",
   flex: "1",
   flexDirection: "column"
 };
@@ -177,11 +180,12 @@ var ChatInput = {
 };
 
 function Chat$MyChatBubble(Props) {
+  var message = Props.message;
   return React.createElement("div", {
               style: rightParent
             }, React.createElement("div", {
                   style: rightBubble
-                }, Ru$Yap.s("message")));
+                }, Ru$Yap.s(Message$Yap.message(message))));
 }
 
 var MyChatBubble = {
@@ -205,18 +209,47 @@ var OtherChatBubble = {
   make: Chat$OtherChatBubble
 };
 
+var defaultState = {
+  messages: []
+};
+
+function reducer(state, action) {
+  if (action) {
+    return {
+            messages: Belt_Array.concat(state.messages, [action._0])
+          };
+  } else {
+    return state;
+  }
+}
+
 function Chat$Body(Props) {
   var id = Props.id;
+  var match = React.useReducer(reducer, defaultState);
+  var dispatch = match[1];
   React.useEffect((function () {
-          ChatEngine$Yap.listen(id);
+          ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                      return Curry._1(dispatch, /* NewMessage */{
+                                  _0: Message$Yap.decode(doc.data())
+                                });
+                    });
+                
+              });
           
         }), []);
   return React.createElement("div", {
               style: bodyParent
-            }, React.createElement(Chat$MyChatBubble, {}), React.createElement(Chat$OtherChatBubble, {}));
+            }, Ru$Yap.map(match[0].messages, (function (message) {
+                    return React.createElement(Chat$MyChatBubble, {
+                                message: message
+                              });
+                  })));
 }
 
 var Body = {
+  defaultState: defaultState,
+  reducer: reducer,
   make: Chat$Body
 };
 

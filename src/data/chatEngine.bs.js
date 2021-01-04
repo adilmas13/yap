@@ -1,6 +1,5 @@
 'use strict';
 
-var Message$Yap = require("./message.bs.js");
 var Firebase$Yap = require("./firebase.bs.js");
 var UserDetails$Yap = require("./userDetails.bs.js");
 var Firestore = require("firebase/firestore");
@@ -37,14 +36,7 @@ function sendMessage(message, doc) {
 }
 
 function listen(doc) {
-  Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "desc").limit(1).onSnapshot(function (querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-              console.log("data", Message$Yap.message(Message$Yap.decode(doc.data())));
-              
-            });
-        
-      });
-  
+  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(50);
 }
 
 exports.Constants = Constants;
