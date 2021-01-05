@@ -142,7 +142,7 @@ module OtherChatBubble = {
 }
 
 module Body = {
-  type action = Loading | NewMessage(Message.t)
+  type action = Loading | NewMessage(array<Message.t>)
 
   type state = {messages: array<Message.t>}
 
@@ -153,7 +153,7 @@ module Body = {
   let reducer = (state: state, action: action) => {
     switch action {
     | Loading => state
-    | NewMessage(message) => {...state, messages: state.messages->Belt.Array.concat([message])}
+    | NewMessage(messages) => {messages: state.messages->Belt.Array.concat(messages)}
     }
   }
 
@@ -161,17 +161,36 @@ module Body = {
   @react.component
   let make = (~id: string) => {
     let (state, dispatch) = React.useReducer(reducer, defaultState)
+
+    let startListening = () =>
+      id
+      ->ChatEngine.listen
+      ->Firebase.Firestore.onSnapshot1(querySnapshot => {
+        querySnapshot
+        ->Firebase.Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
+        ->NewMessage
+        ->dispatch
+      })
+
     React.useEffect1(() => {
       open Firebase
-      let unsubscribe =
-        id
-        ->ChatEngine.listen
-        ->Firestore.onSnapshot1(querySnapshot => {
-          querySnapshot->Firestore.QuerySnapshot.forEach(doc => {
-            doc->Firestore.DocumentSnapshot.data()->Message.decode->NewMessage->dispatch
-          })
-        })
-      Some(() => unsubscribe())
+      let unsubscribe = ref(None)
+      ChatEngine.getLatestMessages(id)->Js.Promise.then_(querySnapshot => {
+        querySnapshot
+        ->Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
+        ->NewMessage
+        ->dispatch
+        unsubscribe := Some(startListening())
+        Js.Promise.resolve()
+      }, _)->ignore
+      Some(
+        () => {
+          switch unsubscribe.contents {
+          | Some(unsub) => unsub()
+          | None => ()
+          }
+        },
+      )
     }, [])
     <div style={bodyParent}> {state.messages->Ru.map(message => <MyChatBubble message />)} </div>
   }

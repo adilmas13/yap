@@ -189,7 +189,7 @@ let make = (~onSubmit: unit => unit) => {
 
   let onClick = (e: ReactEvent.Mouse.t): unit => {
     e->ReactEvent.Mouse.stopPropagation
-    Js.Date.now()->string_of_float->UserDetails.saveUserId
+    Js.Date.now()->Js.Float.toString->UserDetails.saveUserId
     name->UserDetails.saveUsername
     AvatarCollection.avatars->Belt.Array.getUnsafe(selectedAvatar)->UserDetails.saveAvatar
     onSubmit()

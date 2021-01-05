@@ -38,11 +38,17 @@ function isLoggedIn(param) {
   return Belt_Option.isSome(Caml_option.nullable_to_opt(localStorage.getItem(userId)));
 }
 
-var username$1 = Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(username)), "Anonymous User");
+function username$1(param) {
+  return Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(username)), "Anonymous User");
+}
 
-var userId$1 = Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(userId)), "xxx");
+function userId$1(param) {
+  return Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(userId)), "xxx");
+}
 
-var avatar$1 = Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(avatar)), "");
+function avatar$1(param) {
+  return Belt_Option.getWithDefault(Caml_option.nullable_to_opt(localStorage.getItem(avatar)), "");
+}
 
 exports.Constants = Constants;
 exports.saveUsername = saveUsername;
@@ -52,4 +58,4 @@ exports.isLoggedIn = isLoggedIn;
 exports.username = username$1;
 exports.userId = userId$1;
 exports.avatar = avatar$1;
-/* username Not a pure module */
+/* No side effect */

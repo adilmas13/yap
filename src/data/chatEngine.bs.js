@@ -16,12 +16,15 @@ var Constants = {
 var MessageRequest = {};
 
 function sendMessage(message, doc) {
+  var request_user_id = UserDetails$Yap.userId(undefined);
+  var request_username = UserDetails$Yap.username(undefined);
+  var request_profile = UserDetails$Yap.avatar(undefined);
   var request_timestamp = Date.now();
   var request = {
     message: message,
-    user_id: UserDetails$Yap.userId,
-    username: UserDetails$Yap.username,
-    profile: UserDetails$Yap.avatar,
+    user_id: request_user_id,
+    username: request_username,
+    profile: request_profile,
     timestamp: request_timestamp
   };
   var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).add(request);
@@ -36,7 +39,7 @@ function sendMessage(message, doc) {
 }
 
 function listen(doc) {
-  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(1);
+  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "desc").limit(1);
 }
 
 function getLatestMessages(doc) {

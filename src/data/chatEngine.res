@@ -18,10 +18,10 @@ module MessageRequest = {
 
 let sendMessage = (message: string, doc: string) => {
   let request: MessageRequest.t = {
-    message: message,
-    user_id: UserDetails.userId,
-    username: UserDetails.username,
-    profile: UserDetails.avatar,
+    message,
+    user_id: UserDetails.userId(),
+    username: UserDetails.username(),
+    profile: UserDetails.avatar(),
     timestamp: Js.Date.now(),
   }
   firebase
@@ -44,7 +44,7 @@ let listen = (doc: string)=> {
     ->Firestore.collection(Constants.chatRoom)
     ->Firestore.doc(doc)
     ->Firestore.collection1(Constants.messages)
-    ->Firestore.orderBy("timestamp", "asc")
+    ->Firestore.orderBy("timestamp", "desc")
     ->Firestore.limit(1)
 }
 

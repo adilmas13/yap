@@ -4,7 +4,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
-var Pervasives = require("bs-platform/lib/js/pervasives.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
@@ -251,7 +250,7 @@ function Profile(Props) {
   };
   var onClick = function (e) {
     e.stopPropagation();
-    UserDetails$Yap.saveUserId(Pervasives.string_of_float(Date.now()));
+    UserDetails$Yap.saveUserId(Date.now().toString());
     UserDetails$Yap.saveUsername(name);
     UserDetails$Yap.saveAvatar(AvatarCollection$Yap.avatars[selectedAvatar]);
     return Curry._1(onSubmit, undefined);

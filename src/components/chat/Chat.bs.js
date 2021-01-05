@@ -5,6 +5,7 @@ var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Message$Yap = require("../../data/message.bs.js");
+var Firebase$Yap = require("../../data/firebase.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
@@ -216,7 +217,7 @@ var defaultState = {
 function reducer(state, action) {
   if (action) {
     return {
-            messages: Belt_Array.concat(state.messages, [action._0])
+            messages: Belt_Array.concat(state.messages, action._0)
           };
   } else {
     return state;
@@ -227,17 +228,31 @@ function Chat$Body(Props) {
   var id = Props.id;
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
+  var startListening = function (param) {
+    return ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
+                return Curry._1(dispatch, /* NewMessage */{
+                            _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
+                          });
+              });
+  };
   React.useEffect((function () {
-          var unsubscribe = ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                      return Curry._1(dispatch, /* NewMessage */{
-                                  _0: Message$Yap.decode(doc.data())
-                                });
+          var unsubscribe = {
+            contents: undefined
+          };
+          var __x = ChatEngine$Yap.getLatestMessages(id);
+          __x.then(function (querySnapshot) {
+                Curry._1(dispatch, /* NewMessage */{
+                      _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
                     });
-                
+                unsubscribe.contents = startListening(undefined);
+                return Promise.resolve(undefined);
               });
           return (function (param) {
-                    return Curry._1(unsubscribe, undefined);
+                    var unsub = unsubscribe.contents;
+                    if (unsub !== undefined) {
+                      return Curry._1(unsub, undefined);
+                    }
+                    
                   });
         }), []);
   return React.createElement("div", {
