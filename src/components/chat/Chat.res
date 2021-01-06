@@ -153,7 +153,15 @@ module Body = {
   let reducer = (state: state, action: action) => {
     switch action {
     | Loading => state
-    | NewMessage(messages) => {messages: state.messages->Belt.Array.concat(messages)}
+    | NewMessage(messages) => {
+        let newMessage = messages->Belt.Array.getUnsafe(0)
+        let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
+        let shouldAppend = switch lastMessage {
+        | None => true
+        | Some(msg) => newMessage->Message.id !== msg->Message.id
+        }
+        shouldAppend ? {messages: state.messages->Belt.Array.concat(messages)} : state
+      }
     }
   }
 

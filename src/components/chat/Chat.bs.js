@@ -215,9 +215,16 @@ var defaultState = {
 };
 
 function reducer(state, action) {
-  if (action) {
+  if (!action) {
+    return state;
+  }
+  var messages = action._0;
+  var newMessage = messages[0];
+  var lastMessage = Belt_Array.get(state.messages, state.messages.length - 1 | 0);
+  var shouldAppend = lastMessage !== undefined ? Message$Yap.id(newMessage) !== Message$Yap.id(lastMessage) : true;
+  if (shouldAppend) {
     return {
-            messages: Belt_Array.concat(state.messages, action._0)
+            messages: Belt_Array.concat(state.messages, messages)
           };
   } else {
     return state;
