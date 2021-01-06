@@ -4,6 +4,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
+var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 
 var parent = {
   display: "flex",
@@ -189,8 +190,9 @@ function Home$JoinConvesation(Props) {
         return "";
       });
   var setId = match$1[1];
+  var id = match$1[0];
   var joinConversationStyle = match[0] ? Object.assign({}, joinConversationWrapper, active) : joinConversationWrapper;
-  var enterBtnStyle = match$1[0].trim().length < 5 ? enterBtn : Object.assign({}, enterBtn, enterBtnActive);
+  var enterBtnStyle = id.trim().length < 1 ? enterBtn : Object.assign({}, enterBtn, enterBtnActive);
   var onClick = function (e) {
     e.stopPropagation();
     return Curry._1(setActive, (function (active) {
@@ -207,7 +209,7 @@ function Home$JoinConvesation(Props) {
   };
   var enterClick = function (e) {
     e.stopPropagation();
-    
+    return ReasonReactRouter.push("/chat?id=" + id);
   };
   return React.createElement("div", {
               style: joinConversationParent

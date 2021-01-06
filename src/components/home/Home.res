@@ -135,7 +135,7 @@ module JoinConvesation = {
 
     let enterBtnStyle = {
       open ReactDOMRe.Style
-      switch id->Js.String2.trim->Js.String2.length < 5 {
+      switch id->Js.String2.trim->Js.String2.length < 1 {
       | true => Style.enterBtn
       | false => combine(Style.enterBtn, Style.enterBtnActive)
       }
@@ -155,6 +155,7 @@ module JoinConvesation = {
 
     let enterClick = e => {
       e->ReactEventRe.Mouse.stopPropagation
+      ReasonReactRouter.push("/chat?id=" ++ id)
     }
 
     <div style={joinConversationParent}>
