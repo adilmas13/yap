@@ -45,7 +45,7 @@ module Firestore = {
   }
 
   module DocumentSnapshot = {
-    type t;
+    type t
     @bs.send external data: (t, unit) => 'a = "data"
     @bs.get external id: t => 'a = "id"
   }
@@ -78,7 +78,7 @@ module Firestore = {
   @bs.send external limit: (Query.t, int) => Query.t = "limit"
   @bs.send external onSnapshot: (DocRef.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
   @bs.send external onSnapshot1: (Query.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
-  @bs.send external get: (Query.t) => Js.Promise.t<QuerySnapshot.t> = "get"
+  @bs.send external get: Query.t => Js.Promise.t<QuerySnapshot.t> = "get"
 }
 
 @bs.module external _firebase: obj = "firebase/app"

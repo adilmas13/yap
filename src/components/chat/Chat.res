@@ -76,6 +76,26 @@ module Style = {
   }
 }
 
+module ChatUiData = {
+  type t = {
+    id: string,
+    message: Message.t,
+    me: bool,
+  }
+
+  let id = t => t.id
+  let message = t => t.message
+  let me = t => t.me
+
+  let make = (message: Message.t): t => {
+    {
+      id: message->Message.id,
+      message: message,
+      me: message->Message.userId == UserDetails.userId(),
+    }
+  }
+}
+
 module ChatInput = {
   open Style.ChatInputStyle
   @react.component
@@ -121,21 +141,21 @@ module ChatInput = {
 module MyChatBubble = {
   open Style.ChatBubbleStyle
   @react.component
-  let make = (~message: Message.t) => {
-    <div style={rightParent}>
-      <div style={rightBubble}> {message->Message.message->Ru.s} </div>
-    </div>
+  let make = (~message: ChatUiData.t) => {
+    let msg = message->ChatUiData.message
+    <div style={rightParent}> <div style={rightBubble}> {msg->Message.message->Ru.s} </div> </div>
   }
 }
 
 module OtherChatBubble = {
   open Style.ChatBubbleStyle
   @react.component
-  let make = () => {
+  let make = (~message: ChatUiData.t) => {
+    let msg = message->ChatUiData.message
     <div style={leftParent}>
-      <img style={userImage} src={AvatarCollection.avatars->Belt.Array.getUnsafe(0)} />
+      <img style={userImage} src={msg->Message.profile} />
       <div style={leftBubble}>
-        <div style={userName}> {"adil shaikh"->Ru.s} </div> {"message"->Ru.s}
+        <div style={userName}> {msg->Message.username->Ru.s} </div> {msg->Message.message->Ru.s}
       </div>
     </div>
   }
@@ -144,7 +164,7 @@ module OtherChatBubble = {
 module Body = {
   type action = Loading | NewMessage(array<Message.t>)
 
-  type state = {messages: array<Message.t>}
+  type state = {messages: array<ChatUiData.t>}
 
   let defaultState: state = {
     messages: [],
@@ -154,13 +174,14 @@ module Body = {
     switch action {
     | Loading => state
     | NewMessage(messages) => {
-        let newMessage = messages->Belt.Array.getUnsafe(0)
+        let chatUiMessages = messages->Belt.Array.map(msg => msg->ChatUiData.make)
+        let newMessage = chatUiMessages->Belt.Array.getUnsafe(0)
         let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
         let shouldAppend = switch lastMessage {
         | None => true
-        | Some(msg) => newMessage->Message.id !== msg->Message.id
+        | Some(msg) => newMessage->ChatUiData.id !== msg->ChatUiData.id
         }
-        shouldAppend ? {messages: state.messages->Belt.Array.concat(messages)} : state
+        shouldAppend ? {messages: state.messages->Belt.Array.concat(chatUiMessages)} : state
       }
     }
   }
@@ -200,7 +221,15 @@ module Body = {
         },
       )
     }, [])
-    <div style={bodyParent}> {state.messages->Ru.map(message => <MyChatBubble message />)} </div>
+    <div style={bodyParent}>
+      {state.messages->Ru.map(message => {
+        let key = message->ChatUiData.id
+        switch message->ChatUiData.me {
+        | true => <MyChatBubble key message />
+        | false => <OtherChatBubble key message />
+        }
+      })}
+    </div>
   }
 }
 

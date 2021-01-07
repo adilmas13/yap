@@ -18,7 +18,7 @@ module MessageRequest = {
 
 let sendMessage = (message: string, doc: string) => {
   let request: MessageRequest.t = {
-    message,
+    message: message,
     user_id: UserDetails.userId(),
     username: UserDetails.username(),
     profile: UserDetails.avatar(),
@@ -38,14 +38,14 @@ let sendMessage = (message: string, doc: string) => {
   ->ignore
 }
 
-let listen = (doc: string)=> {
-    firebase
-    ->firestore
-    ->Firestore.collection(Constants.chatRoom)
-    ->Firestore.doc(doc)
-    ->Firestore.collection1(Constants.messages)
-    ->Firestore.orderBy("timestamp", "desc")
-    ->Firestore.limit(1)
+let listen = (doc: string) => {
+  firebase
+  ->firestore
+  ->Firestore.collection(Constants.chatRoom)
+  ->Firestore.doc(doc)
+  ->Firestore.collection1(Constants.messages)
+  ->Firestore.orderBy("timestamp", "desc")
+  ->Firestore.limit(1)
 }
 
 let getLatestMessages = (doc: string) => {

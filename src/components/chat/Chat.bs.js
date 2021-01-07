@@ -8,7 +8,7 @@ var Message$Yap = require("../../data/message.bs.js");
 var Firebase$Yap = require("../../data/firebase.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
-var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
+var UserDetails$Yap = require("../../data/userDetails.bs.js");
 
 var parent = {
   display: "flex",
@@ -127,6 +127,33 @@ var Style = {
   ChatBubbleStyle: ChatBubbleStyle
 };
 
+function id(t) {
+  return t.id;
+}
+
+function message(t) {
+  return t.message;
+}
+
+function me(t) {
+  return t.me;
+}
+
+function make(message) {
+  return {
+          id: Message$Yap.id(message),
+          message: message,
+          me: Message$Yap.userId(message) === UserDetails$Yap.userId(undefined)
+        };
+}
+
+var ChatUiData = {
+  id: id,
+  message: message,
+  me: me,
+  make: make
+};
+
 function Chat$ChatInput(Props) {
   var id = Props.id;
   var match = React.useState(function () {
@@ -182,11 +209,12 @@ var ChatInput = {
 
 function Chat$MyChatBubble(Props) {
   var message = Props.message;
+  var msg = message.message;
   return React.createElement("div", {
               style: rightParent
             }, React.createElement("div", {
                   style: rightBubble
-                }, Ru$Yap.s(Message$Yap.message(message))));
+                }, Ru$Yap.s(Message$Yap.message(msg))));
 }
 
 var MyChatBubble = {
@@ -194,16 +222,18 @@ var MyChatBubble = {
 };
 
 function Chat$OtherChatBubble(Props) {
+  var message = Props.message;
+  var msg = message.message;
   return React.createElement("div", {
               style: leftParent
             }, React.createElement("img", {
                   style: userImage,
-                  src: AvatarCollection$Yap.avatars[0]
+                  src: Message$Yap.profile(msg)
                 }), React.createElement("div", {
                   style: leftBubble
                 }, React.createElement("div", {
                       style: userName
-                    }, Ru$Yap.s("adil shaikh")), Ru$Yap.s("message")));
+                    }, Ru$Yap.s(Message$Yap.username(msg))), Ru$Yap.s(Message$Yap.message(msg))));
 }
 
 var OtherChatBubble = {
@@ -218,13 +248,13 @@ function reducer(state, action) {
   if (!action) {
     return state;
   }
-  var messages = action._0;
-  var newMessage = messages[0];
+  var chatUiMessages = Belt_Array.map(action._0, make);
+  var newMessage = chatUiMessages[0];
   var lastMessage = Belt_Array.get(state.messages, state.messages.length - 1 | 0);
-  var shouldAppend = lastMessage !== undefined ? Message$Yap.id(newMessage) !== Message$Yap.id(lastMessage) : true;
+  var shouldAppend = lastMessage !== undefined ? newMessage.id !== lastMessage.id : true;
   if (shouldAppend) {
     return {
-            messages: Belt_Array.concat(state.messages, messages)
+            messages: Belt_Array.concat(state.messages, chatUiMessages)
           };
   } else {
     return state;
@@ -265,9 +295,18 @@ function Chat$Body(Props) {
   return React.createElement("div", {
               style: bodyParent
             }, Ru$Yap.map(match[0].messages, (function (message) {
-                    return React.createElement(Chat$MyChatBubble, {
-                                message: message
-                              });
+                    var key = message.id;
+                    if (message.me) {
+                      return React.createElement(Chat$MyChatBubble, {
+                                  message: message,
+                                  key: key
+                                });
+                    } else {
+                      return React.createElement(Chat$OtherChatBubble, {
+                                  message: message,
+                                  key: key
+                                });
+                    }
                   })));
 }
 
@@ -288,12 +327,13 @@ function Chat(Props) {
                 }));
 }
 
-var make = Chat;
+var make$1 = Chat;
 
 exports.Style = Style;
+exports.ChatUiData = ChatUiData;
 exports.ChatInput = ChatInput;
 exports.MyChatBubble = MyChatBubble;
 exports.OtherChatBubble = OtherChatBubble;
 exports.Body = Body;
-exports.make = make;
+exports.make = make$1;
 /* react Not a pure module */

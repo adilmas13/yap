@@ -1,5 +1,5 @@
 type t = {
-    id:string,
+  id: string,
   message: string,
   profile: string,
   timestamp: int,
@@ -8,7 +8,7 @@ type t = {
 }
 
 let decode = (json, id) => {
-id,
+  id: id,
   message: json->Json.Decode.field("message", Json.Decode.string, _),
   profile: json->Json.Decode.field("profile", Json.Decode.string, _),
   timestamp: json->Json.Decode.field("timestamp", Json.Decode.int, _),

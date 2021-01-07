@@ -20,8 +20,10 @@ let saveUserId = (id: string) => {
 
 let isLoggedIn = () => Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.isSome
 
-let username = () => Constants.username->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("Anonymous User")
+let username = () =>
+  Constants.username->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("Anonymous User")
 
-let userId = () => Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("xxx")
+let userId = () =>
+  Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("xxx")
 
 let avatar = () => Constants.avatar->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("")
