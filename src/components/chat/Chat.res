@@ -255,6 +255,7 @@ module Body = {
         },
       )
     }, [])
+
     <div style={bodyParent}>
       {state.messages->Ru.map(message => {
         let key = message->ChatUiData.id
