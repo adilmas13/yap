@@ -153,9 +153,24 @@ module JoinConvesation = {
       setId(_ => value)
     }
 
-    let enterClick = e => {
-      e->ReactEventRe.Mouse.stopPropagation
-      ReasonReactRouter.push("/chat?id=" ++ id)
+    let redirect = () => {
+      let sanitizedId = id->Js.String2.trim
+      if sanitizedId->Js.String2.length > 3 {
+        j`/chat?id=${sanitizedId}`->ReasonReactRouter.push
+      }
+    }
+
+    let enterClick = (e: ReactEvent.Mouse.t) => {
+      e->ReactEvent.Mouse.stopPropagation
+      redirect()
+    }
+
+    let onKeyDown = (e: ReactEvent.Keyboard.t) => {
+      e->ReactEvent.Keyboard.stopPropagation
+      let key = e->ReactEvent.Keyboard.keyCode
+      if key == 13 {
+        redirect()
+      }
     }
 
     <div style={joinConversationParent}>
@@ -170,6 +185,7 @@ module JoinConvesation = {
             placeholder="id"
             style={input}
             onChange
+            onKeyDown
             onClick={e => e->ReactEvent.Mouse.stopPropagation}
           />
           <img style={enterBtnStyle} src={AssetLoader.arrow} onClick=enterClick />

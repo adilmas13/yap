@@ -207,9 +207,24 @@ function Home$JoinConvesation(Props) {
                   return value;
                 }));
   };
+  var redirect = function (param) {
+    var sanitizedId = id.trim();
+    if (sanitizedId.length > 3) {
+      return ReasonReactRouter.push("/chat?id=" + sanitizedId);
+    }
+    
+  };
   var enterClick = function (e) {
     e.stopPropagation();
-    return ReasonReactRouter.push("/chat?id=" + id);
+    return redirect(undefined);
+  };
+  var onKeyDown = function (e) {
+    e.stopPropagation();
+    var key = e.keyCode;
+    if (key === 13) {
+      return redirect(undefined);
+    }
+    
   };
   return React.createElement("div", {
               style: joinConversationParent
@@ -230,6 +245,7 @@ function Home$JoinConvesation(Props) {
                         }, Ru$Yap.s("enter chat id")), React.createElement("input", {
                           style: input,
                           placeholder: "id",
+                          onKeyDown: onKeyDown,
                           onChange: onChange,
                           onClick: (function (e) {
                               e.stopPropagation();
