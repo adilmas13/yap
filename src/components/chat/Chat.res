@@ -78,10 +78,9 @@ module Style = {
 
 module ChatUiData = {
   type uiType =
-    | First
-    | Middle
-    | Last
     | Default
+    | Secondary
+
   type t = {
     id: string,
     message: Message.t,
@@ -103,7 +102,7 @@ module ChatUiData = {
         switch previousMessage {
         | None => Default
         | Some(prevMsg) =>
-          message->Message.userId == prevMsg.message->Message.userId ? Middle : First
+          message->Message.userId == prevMsg.message->Message.userId ? Secondary : Default
         }
       },
     }
@@ -169,13 +168,13 @@ module OtherChatBubble = {
     let imgStyle = {
       switch message->ChatUiData.uiType {
       | Default => userImage
-      | _ => Style.combine(userImage, Style.make(~visibility="hidden", ()))
+      | Secondary => Style.combine(userImage, Style.make(~visibility="hidden", ()))
       }
     }
     let userNameStyle = {
       switch message->ChatUiData.uiType {
       | Default => userName
-      | _ => Style.combine(userImage, Style.make(~display="none", ()))
+      | Secondary => Style.combine(userImage, Style.make(~display="none", ()))
       }
     }
     let msg = message->ChatUiData.message
@@ -273,31 +272,3 @@ let make = (~id: string) => {
   open Style
   <div style={parent}> <Body id /> <ChatInput id /> </div>
 }
-
-/*
- React.useEffect1(() => {
-    open Firebase
-    Firestore.require
-    //    _firestoreImport
-    //    firebase
-    //    ->firestore
-    //    ->Firestore.collection("chat_room")
-    //    ->Firestore.add({
-    //      name: "adil",
-    //      age: 30,
-    //    })
-    //    ->Js.Promise.then_(value => value->Js.Promise.resolve, _)
-    //    ->ignore
-
-    firebase
-    ->firestore
-    ->Firestore.collection("chat_room")
-    ->Firestore.doc("123")
-    ->Firestore.onSnapshot((value: Firestore.DocRef.t) => {
-      Js.log2("onSnapshot", value->Firestore.DocRef.data())
-    })
-    ->ignore
-    None
-  }, [])
-
-*/

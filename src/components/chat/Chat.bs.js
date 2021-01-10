@@ -148,9 +148,7 @@ function make(message, previousMessage) {
           id: Message$Yap.id(message),
           message: message,
           me: Message$Yap.userId(message) === UserDetails$Yap.userId(undefined),
-          uiType: previousMessage !== undefined ? (
-              Message$Yap.userId(message) === Message$Yap.userId(previousMessage.message) ? /* Middle */1 : /* First */0
-            ) : /* Default */3
+          uiType: previousMessage !== undefined && Message$Yap.userId(message) === Message$Yap.userId(previousMessage.message) ? /* Secondary */1 : /* Default */0
         };
 }
 
@@ -232,13 +230,13 @@ var MyChatBubble = {
 function Chat$OtherChatBubble(Props) {
   var message = Props.message;
   var match = message.uiType;
-  var imgStyle = match >= 3 ? userImage : Object.assign({}, userImage, {
+  var imgStyle = match ? Object.assign({}, userImage, {
           visibility: "hidden"
-        });
+        }) : userImage;
   var match$1 = message.uiType;
-  var userNameStyle = match$1 >= 3 ? userName : Object.assign({}, userImage, {
+  var userNameStyle = match$1 ? Object.assign({}, userImage, {
           display: "none"
-        });
+        }) : userName;
   var msg = message.message;
   return React.createElement("div", {
               style: leftParent
