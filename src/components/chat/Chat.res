@@ -233,40 +233,23 @@ module Body = {
       element->Webapi.Dom.Element.setScrollTop(scrollHeight)
     }
 
-    let startListening = () => {
-      id
-      ->ChatEngine.listen
-      ->Rx.Observable.subscribe(
-        ~next=messages => {
-          messages->NewMessage->dispatch
-          scrollToBottom()
-        },
-        ~error=_ => (),
-        ~complete=() => (),
-        _,
-      )
-    }
-
     React.useEffect1(() => {
-      let subscription = ref(None)
-      id
-      ->ChatEngine.getLatestMessages
-      ->Rx.Observable.subscribe(
-        ~next=messages => {
-          messages->PreviousMessages->dispatch
-          subscription := startListening()->Some
-        },
-        ~error=_ => (),
-        ~complete=() => (),
-        _,
-      )
-      ->ignore
+      let subscription =
+        id
+        ->ChatEngine.getLatestMessages
+        ->Ru.tapNext(messages => messages->PreviousMessages->dispatch)
+        ->Rx.Operators.switchMapn(_ => id->ChatEngine.listen, _)
+        ->Ru.onNextError(
+          ~next=messages => {
+            messages->NewMessage->dispatch
+            scrollToBottom()
+          },
+          ~error=_ => (),
+          _,
+        )
       Some(
         () => {
-          switch subscription.contents {
-          | Some(sub) => sub->Rx.Subscription.unsubscribe
-          | None => ()
-          }
+          subscription->Rx.Subscription.unsubscribe
         },
       )
     }, [])

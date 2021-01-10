@@ -6,7 +6,7 @@ var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Message$Yap = require("../../data/message.bs.js");
-var Rx_Observable = require("@ambientlight/bs-rx/src/internal/Rx_Observable.bs.js");
+var Rx_Operators = require("@ambientlight/bs-rx/src/Rx_Operators.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
@@ -289,9 +289,17 @@ function Chat$Body(Props) {
   var scrollerRef = React.useRef(null);
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
-  var startListening = function (param) {
-    var __x = ChatEngine$Yap.listen(id);
-    return Rx_Observable.Observable.subscribe((function (messages) {
+  React.useEffect((function () {
+          var __x = Ru$Yap.tapNext(ChatEngine$Yap.getLatestMessages(id), (function (messages) {
+                  return Curry._1(dispatch, {
+                              TAG: /* PreviousMessages */0,
+                              _0: messages
+                            });
+                }));
+          var __x$1 = Curry._1(Rx_Operators.switchMapn(function (param) {
+                    return ChatEngine$Yap.listen(id);
+                  }), __x);
+          var subscription = Ru$Yap.onNextError(__x$1, (function (messages) {
                   Curry._1(dispatch, {
                         TAG: /* NewMessage */1,
                         _0: messages
@@ -303,33 +311,9 @@ function Chat$Body(Props) {
                   
                 }), (function (param) {
                   
-                }), (function (param) {
-                  
-                }), __x);
-  };
-  React.useEffect((function () {
-          var subscription = {
-            contents: undefined
-          };
-          var __x = ChatEngine$Yap.getLatestMessages(id);
-          Rx_Observable.Observable.subscribe((function (messages) {
-                  Curry._1(dispatch, {
-                        TAG: /* PreviousMessages */0,
-                        _0: messages
-                      });
-                  subscription.contents = Caml_option.some(startListening(undefined));
-                  
-                }), (function (param) {
-                  
-                }), (function (param) {
-                  
-                }), __x);
+                }));
           return (function (param) {
-                    var sub = subscription.contents;
-                    if (sub !== undefined) {
-                      Caml_option.valFromOption(sub).unsubscribe();
-                      return ;
-                    }
+                    subscription.unsubscribe();
                     
                   });
         }), []);

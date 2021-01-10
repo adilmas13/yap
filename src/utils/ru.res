@@ -9,3 +9,11 @@ let map = (items: array<'a>, func: 'a => 'b) => {
 let mapi = (items: array<'a>, func: (int, 'a) => 'b) => {
   items->Belt.Array.mapWithIndex(func)->React.array
 }
+
+let tapNext = (observable: Rx.Observable.t<'a>, func: 'a => unit) => {
+  observable->Rx.Operators.tap(~next=func, ~error=_ => (), ~complete=_ => ())
+}
+
+let onNextError = (observable: Rx.Observable.t<'a>, ~next: 'a => unit, ~error: 'b => unit) => {
+  observable->Rx.Observable.subscribe(~next, ~error, ~complete=_ => ())
+}
