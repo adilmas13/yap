@@ -222,9 +222,18 @@ module Body = {
   open Style
   @react.component
   let make = (~id: string) => {
+    let scrollerRef = React.useRef(Js.Nullable.null)
     let (state, dispatch) = React.useReducer(reducer, defaultState)
 
-    let startListening = () =>
+    let scrollToBottom = () => {
+      open Webapi
+      let element = scrollerRef.current->Js.Nullable.toOption->Belt.Option.getUnsafe
+      let scrollTop = element->Dom.Element.scrollTop->int_of_float
+      let scrollHeight = element->Dom.Element.scrollHeight->Js.Int.toFloat
+      element->Webapi.Dom.Element.setScrollTop(scrollHeight)
+    }
+
+    let startListening = () => {
       id
       ->ChatEngine.listen
       ->Firebase.Firestore.onSnapshot1(querySnapshot => {
@@ -232,7 +241,9 @@ module Body = {
         ->Firebase.Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
         ->NewMessage
         ->dispatch
+        scrollToBottom()
       })
+    }
 
     React.useEffect1(() => {
       open Firebase
@@ -255,7 +266,7 @@ module Body = {
       )
     }, [])
 
-    <div style={bodyParent}>
+    <div style={bodyParent} ref={scrollerRef->ReactDOM.Ref.domRef}>
       {state.messages->Ru.map(message => {
         let key = message->ChatUiData.id
         switch message->ChatUiData.me {

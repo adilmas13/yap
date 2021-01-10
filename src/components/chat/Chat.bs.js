@@ -4,6 +4,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Message$Yap = require("../../data/message.bs.js");
 var Firebase$Yap = require("../../data/firebase.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
@@ -285,14 +286,20 @@ function reducer(state, action) {
 
 function Chat$Body(Props) {
   var id = Props.id;
+  var scrollerRef = React.useRef(null);
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
   var startListening = function (param) {
     return ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
-                return Curry._1(dispatch, {
-                            TAG: /* NewMessage */1,
-                            _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
-                          });
+                Curry._1(dispatch, {
+                      TAG: /* NewMessage */1,
+                      _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
+                    });
+                var element = scrollerRef.current;
+                var element$1 = (element == null) ? undefined : Caml_option.some(element);
+                var scrollHeight = element$1.scrollHeight;
+                element$1.scrollTop = scrollHeight;
+                
               });
   };
   React.useEffect((function () {
@@ -317,6 +324,7 @@ function Chat$Body(Props) {
                   });
         }), []);
   return React.createElement("div", {
+              ref: scrollerRef,
               style: bodyParent
             }, Ru$Yap.map(match[0].messages, (function (message) {
                     var key = message.id;

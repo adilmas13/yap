@@ -55,6 +55,6 @@ let getLatestMessages = (doc: string) => {
   ->Firestore.doc(doc)
   ->Firestore.collection1(Constants.messages)
   ->Firestore.orderBy("timestamp", "asc")
-  ->Firestore.limit(10)
+  ->Firestore.limit(50)
   ->Firestore.get
 }

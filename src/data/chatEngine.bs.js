@@ -43,7 +43,7 @@ function listen(doc) {
 }
 
 function getLatestMessages(doc) {
-  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(10).get();
+  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(50).get();
 }
 
 exports.Constants = Constants;
