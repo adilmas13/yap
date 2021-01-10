@@ -6,7 +6,7 @@ var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Message$Yap = require("../../data/message.bs.js");
-var Firebase$Yap = require("../../data/firebase.bs.js");
+var Rx_Observable = require("@ambientlight/bs-rx/src/internal/Rx_Observable.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
@@ -290,35 +290,45 @@ function Chat$Body(Props) {
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
   var startListening = function (param) {
-    return ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
-                Curry._1(dispatch, {
-                      TAG: /* NewMessage */1,
-                      _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
-                    });
-                var element = scrollerRef.current;
-                var element$1 = (element == null) ? undefined : Caml_option.some(element);
-                var scrollHeight = element$1.scrollHeight;
-                element$1.scrollTop = scrollHeight;
-                
-              });
+    var __x = ChatEngine$Yap.listen(id);
+    return Rx_Observable.Observable.subscribe((function (messages) {
+                  Curry._1(dispatch, {
+                        TAG: /* NewMessage */1,
+                        _0: messages
+                      });
+                  var element = scrollerRef.current;
+                  var element$1 = (element == null) ? undefined : Caml_option.some(element);
+                  var scrollHeight = element$1.scrollHeight;
+                  element$1.scrollTop = scrollHeight;
+                  
+                }), (function (param) {
+                  
+                }), (function (param) {
+                  
+                }), __x);
   };
   React.useEffect((function () {
-          var unsubscribe = {
+          var subscription = {
             contents: undefined
           };
           var __x = ChatEngine$Yap.getLatestMessages(id);
-          __x.then(function (querySnapshot) {
-                Curry._1(dispatch, {
-                      TAG: /* PreviousMessages */0,
-                      _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
-                    });
-                unsubscribe.contents = startListening(undefined);
-                return Promise.resolve(undefined);
-              });
+          Rx_Observable.Observable.subscribe((function (messages) {
+                  Curry._1(dispatch, {
+                        TAG: /* PreviousMessages */0,
+                        _0: messages
+                      });
+                  subscription.contents = Caml_option.some(startListening(undefined));
+                  
+                }), (function (param) {
+                  
+                }), (function (param) {
+                  
+                }), __x);
           return (function (param) {
-                    var unsub = unsubscribe.contents;
-                    if (unsub !== undefined) {
-                      return Curry._1(unsub, undefined);
+                    var sub = subscription.contents;
+                    if (sub !== undefined) {
+                      Caml_option.valFromOption(sub).unsubscribe();
+                      return ;
                     }
                     
                   });

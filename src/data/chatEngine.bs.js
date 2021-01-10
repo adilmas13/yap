@@ -1,5 +1,8 @@
 'use strict';
 
+var Rxjs = require("rxjs");
+var Curry = require("bs-platform/lib/js/curry.js");
+var Message$Yap = require("./message.bs.js");
 var Firebase$Yap = require("./firebase.bs.js");
 var UserDetails$Yap = require("./userDetails.bs.js");
 var Firestore = require("firebase/firestore");
@@ -13,21 +16,28 @@ var Constants = {
   messages: messages
 };
 
-var MessageRequest = {};
+function make(message) {
+  return {
+          message: message,
+          user_id: UserDetails$Yap.userId(undefined),
+          username: UserDetails$Yap.username(undefined),
+          profile: UserDetails$Yap.avatar(undefined),
+          timestamp: Date.now()
+        };
+}
+
+var MessageRequest = {
+  make: make
+};
+
+function test(param) {
+  return new Rxjs.Observable((function (subscriber) {
+                
+              }));
+}
 
 function sendMessage(message, doc) {
-  var request_user_id = UserDetails$Yap.userId(undefined);
-  var request_username = UserDetails$Yap.username(undefined);
-  var request_profile = UserDetails$Yap.avatar(undefined);
-  var request_timestamp = Date.now();
-  var request = {
-    message: message,
-    user_id: request_user_id,
-    username: request_username,
-    profile: request_profile,
-    timestamp: request_timestamp
-  };
-  var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).add(request);
+  var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).add(make(message));
   var __x$1 = __x.then(function (param) {
         return Promise.resolve(undefined);
       });
@@ -39,15 +49,33 @@ function sendMessage(message, doc) {
 }
 
 function listen(doc) {
-  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "desc").limit(1);
+  return new Rxjs.Observable((function (subscriber) {
+                var unsubscribe = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "desc").limit(1).onSnapshot(function (querySnapshot) {
+                      subscriber.next(Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode));
+                      
+                    });
+                return function (param) {
+                  return Curry._1(unsubscribe, undefined);
+                };
+              }));
 }
 
 function getLatestMessages(doc) {
-  return Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(50).get();
+  return new Rxjs.Observable((function (subscriber) {
+                var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).orderBy("timestamp", "asc").limit(50).get();
+                __x.then(function (querySnapshot) {
+                      var messages = Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode);
+                      subscriber.next(messages);
+                      subscriber.complete();
+                      return Promise.resolve(undefined);
+                    });
+                
+              }));
 }
 
 exports.Constants = Constants;
 exports.MessageRequest = MessageRequest;
+exports.test = test;
 exports.sendMessage = sendMessage;
 exports.listen = listen;
 exports.getLatestMessages = getLatestMessages;

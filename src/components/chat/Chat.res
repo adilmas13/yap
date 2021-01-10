@@ -236,30 +236,35 @@ module Body = {
     let startListening = () => {
       id
       ->ChatEngine.listen
-      ->Firebase.Firestore.onSnapshot1(querySnapshot => {
-        querySnapshot
-        ->Firebase.Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
-        ->NewMessage
-        ->dispatch
-        scrollToBottom()
-      })
+      ->Rx.Observable.subscribe(
+        ~next=messages => {
+          messages->NewMessage->dispatch
+          scrollToBottom()
+        },
+        ~error=_ => (),
+        ~complete=() => (),
+        _,
+      )
     }
 
     React.useEffect1(() => {
-      open Firebase
-      let unsubscribe = ref(None)
-      ChatEngine.getLatestMessages(id)->Js.Promise.then_(querySnapshot => {
-        querySnapshot
-        ->Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
-        ->PreviousMessages
-        ->dispatch
-        unsubscribe := Some(startListening())
-        Js.Promise.resolve()
-      }, _)->ignore
+      let subscription = ref(None)
+      id
+      ->ChatEngine.getLatestMessages
+      ->Rx.Observable.subscribe(
+        ~next=messages => {
+          messages->PreviousMessages->dispatch
+          subscription := startListening()->Some
+        },
+        ~error=_ => (),
+        ~complete=() => (),
+        _,
+      )
+      ->ignore
       Some(
         () => {
-          switch unsubscribe.contents {
-          | Some(unsub) => unsub()
+          switch subscription.contents {
+          | Some(sub) => sub->Rx.Subscription.unsubscribe
           | None => ()
           }
         },
