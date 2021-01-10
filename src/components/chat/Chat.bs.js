@@ -139,11 +139,18 @@ function me(t) {
   return t.me;
 }
 
-function make(message) {
+function uiType(t) {
+  return t.uiType;
+}
+
+function make(message, previousMessage) {
   return {
           id: Message$Yap.id(message),
           message: message,
-          me: Message$Yap.userId(message) === UserDetails$Yap.userId(undefined)
+          me: Message$Yap.userId(message) === UserDetails$Yap.userId(undefined),
+          uiType: previousMessage !== undefined ? (
+              Message$Yap.userId(message) === Message$Yap.userId(previousMessage.message) ? /* Middle */1 : /* First */0
+            ) : /* Default */3
         };
 }
 
@@ -151,6 +158,7 @@ var ChatUiData = {
   id: id,
   message: message,
   me: me,
+  uiType: uiType,
   make: make
 };
 
@@ -223,16 +231,24 @@ var MyChatBubble = {
 
 function Chat$OtherChatBubble(Props) {
   var message = Props.message;
+  var match = message.uiType;
+  var imgStyle = match >= 3 ? userImage : Object.assign({}, userImage, {
+          visibility: "hidden"
+        });
+  var match$1 = message.uiType;
+  var userNameStyle = match$1 >= 3 ? userName : Object.assign({}, userImage, {
+          display: "none"
+        });
   var msg = message.message;
   return React.createElement("div", {
               style: leftParent
             }, React.createElement("img", {
-                  style: userImage,
+                  style: imgStyle,
                   src: Message$Yap.profile(msg)
                 }), React.createElement("div", {
                   style: leftBubble
                 }, React.createElement("div", {
-                      style: userName
+                      style: userNameStyle
                     }, Ru$Yap.s(Message$Yap.username(msg))), Ru$Yap.s(Message$Yap.message(msg))));
 }
 
@@ -245,16 +261,24 @@ var defaultState = {
 };
 
 function reducer(state, action) {
-  if (!action) {
+  if (typeof action === "number") {
     return state;
   }
-  var chatUiMessages = Belt_Array.map(action._0, make);
-  var newMessage = chatUiMessages[0];
+  if (action.TAG === /* PreviousMessages */0) {
+    var chatUiMessages = Belt_Array.reduce(action._0, [], (function (acc, msg) {
+            var newMsg = make(msg, Belt_Array.get(acc, acc.length - 1 | 0));
+            return Belt_Array.concat(acc, [newMsg]);
+          }));
+    return {
+            messages: chatUiMessages
+          };
+  }
   var lastMessage = Belt_Array.get(state.messages, state.messages.length - 1 | 0);
+  var newMessage = make(action._0[0], lastMessage);
   var shouldAppend = lastMessage !== undefined ? newMessage.id !== lastMessage.id : true;
   if (shouldAppend) {
     return {
-            messages: Belt_Array.concat(state.messages, chatUiMessages)
+            messages: Belt_Array.concat(state.messages, [newMessage])
           };
   } else {
     return state;
@@ -267,7 +291,8 @@ function Chat$Body(Props) {
   var dispatch = match[1];
   var startListening = function (param) {
     return ChatEngine$Yap.listen(id).onSnapshot(function (querySnapshot) {
-                return Curry._1(dispatch, /* NewMessage */{
+                return Curry._1(dispatch, {
+                            TAG: /* NewMessage */1,
                             _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
                           });
               });
@@ -278,7 +303,8 @@ function Chat$Body(Props) {
           };
           var __x = ChatEngine$Yap.getLatestMessages(id);
           __x.then(function (querySnapshot) {
-                Curry._1(dispatch, /* NewMessage */{
+                Curry._1(dispatch, {
+                      TAG: /* PreviousMessages */0,
                       _0: Curry._2(Firebase$Yap.Firestore.QuerySnapshot.mapDataTo, querySnapshot, Message$Yap.decode)
                     });
                 unsubscribe.contents = startListening(undefined);

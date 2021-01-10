@@ -77,21 +77,35 @@ module Style = {
 }
 
 module ChatUiData = {
+  type uiType =
+    | First
+    | Middle
+    | Last
+    | Default
   type t = {
     id: string,
     message: Message.t,
     me: bool,
+    uiType: uiType,
   }
 
   let id = t => t.id
   let message = t => t.message
   let me = t => t.me
+  let uiType = t => t.uiType
 
-  let make = (message: Message.t): t => {
+  let make = (message: Message.t, previousMessage: option<t>) => {
     {
       id: message->Message.id,
       message: message,
       me: message->Message.userId == UserDetails.userId(),
+      uiType: {
+        switch previousMessage {
+        | None => Default
+        | Some(prevMsg) =>
+          message->Message.userId == prevMsg.message->Message.userId ? Middle : First
+        }
+      },
     }
   }
 }
@@ -149,20 +163,34 @@ module MyChatBubble = {
 
 module OtherChatBubble = {
   open Style.ChatBubbleStyle
+  open ReactDOMRe
   @react.component
   let make = (~message: ChatUiData.t) => {
+    let imgStyle = {
+      switch message->ChatUiData.uiType {
+      | Default => userImage
+      | _ => Style.combine(userImage, Style.make(~visibility="hidden", ()))
+      }
+    }
+    let userNameStyle = {
+      switch message->ChatUiData.uiType {
+      | Default => userName
+      | _ => Style.combine(userImage, Style.make(~display="none", ()))
+      }
+    }
     let msg = message->ChatUiData.message
     <div style={leftParent}>
-      <img style={userImage} src={msg->Message.profile} />
+      <img style={imgStyle} src={msg->Message.profile} />
       <div style={leftBubble}>
-        <div style={userName}> {msg->Message.username->Ru.s} </div> {msg->Message.message->Ru.s}
+        <div style={userNameStyle}> {msg->Message.username->Ru.s} </div>
+        {msg->Message.message->Ru.s}
       </div>
     </div>
   }
 }
 
 module Body = {
-  type action = Loading | NewMessage(array<Message.t>)
+  type action = Loading | PreviousMessages(array<Message.t>) | NewMessage(array<Message.t>)
 
   type state = {messages: array<ChatUiData.t>}
 
@@ -173,15 +201,21 @@ module Body = {
   let reducer = (state: state, action: action) => {
     switch action {
     | Loading => state
+    | PreviousMessages(messages) => {
+        let chatUiMessages = messages->Belt.Array.reduce([], (acc, msg) => {
+          let newMsg = msg->ChatUiData.make(acc->Belt.Array.get(acc->Belt.Array.length - 1))
+          acc->Belt.Array.concat([newMsg])
+        })
+        {...state, messages: chatUiMessages}
+      }
     | NewMessage(messages) => {
-        let chatUiMessages = messages->Belt.Array.map(msg => msg->ChatUiData.make)
-        let newMessage = chatUiMessages->Belt.Array.getUnsafe(0)
         let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
+        let newMessage = messages->Belt.Array.getUnsafe(0)->ChatUiData.make(lastMessage)
         let shouldAppend = switch lastMessage {
         | None => true
         | Some(msg) => newMessage->ChatUiData.id !== msg->ChatUiData.id
         }
-        shouldAppend ? {messages: state.messages->Belt.Array.concat(chatUiMessages)} : state
+        shouldAppend ? {...state, messages: state.messages->Belt.Array.concat([newMessage])} : state
       }
     }
   }
@@ -207,7 +241,7 @@ module Body = {
       ChatEngine.getLatestMessages(id)->Js.Promise.then_(querySnapshot => {
         querySnapshot
         ->Firestore.QuerySnapshot.mapDataTo((msg, id) => msg->Message.decode(id))
-        ->NewMessage
+        ->PreviousMessages
         ->dispatch
         unsubscribe := Some(startListening())
         Js.Promise.resolve()
