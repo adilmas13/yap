@@ -35,9 +35,9 @@ var choice = {
   border: "1px solid #ccc",
   cursor: "pointer",
   display: "flex",
-  height: "200px",
+  height: "250px",
   position: "relative",
-  width: "200px",
+  width: "250px",
   borderRadius: "10px",
   alignItems: "center",
   flexDirection: "column",
@@ -53,7 +53,7 @@ var choiceTitle = {
 };
 
 var choiceIcon = {
-  width: "100px"
+  width: "120px"
 };
 
 var startConversationIcon = {
@@ -61,8 +61,8 @@ var startConversationIcon = {
 };
 
 var joinConversationParent = {
-  height: "200px",
-  width: "200px",
+  height: "250px",
+  width: "250px",
   perspective: "1000px"
 };
 
@@ -114,8 +114,9 @@ var input = {
   border: "none",
   borderBottom: "2px solid #3a7bd5",
   color: "black",
-  fontSize: "26px",
-  marginTop: "5px",
+  fontSize: "18px",
+  marginTop: "15px",
+  marginBottom: "15px",
   outline: "none",
   textAlign: "center",
   width: "100%",
@@ -129,10 +130,10 @@ var active = {
 var enterBtn = {
   background: "linear-gradient(0deg, #00d2ff, #3a7bd5)",
   cursor: "none",
-  height: "35px",
+  height: "40px",
   marginTop: "10px",
   padding: "10px",
-  width: "35px",
+  width: "40px",
   opacity: "0.2",
   borderRadius: "50%",
   transition: "0.2s ease-out all",

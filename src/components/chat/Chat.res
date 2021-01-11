@@ -207,7 +207,8 @@ module Body = {
         })
         {...state, messages: chatUiMessages}
       }
-    | NewMessage(messages) => switch messages->Belt.Array.get(0) {
+    | NewMessage(messages) =>
+      switch messages->Belt.Array.get(0) {
       | Some(msg) => {
           let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
           let newMessage = msg->ChatUiData.make(lastMessage)

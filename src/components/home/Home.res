@@ -15,8 +15,8 @@ module Style = {
   let choice = make(
     ~display="flex",
     ~flexDirection="column",
-    ~height="200px",
-    ~width="200px",
+    ~height="250px",
+    ~width="250px",
     ~borderRadius="10px",
     ~border="1px solid #ccc",
     ~cursor="pointer",
@@ -33,9 +33,9 @@ module Style = {
     ~marginTop="5px",
     (),
   )
-  let choiceIcon = make(~width="100px", ())
+  let choiceIcon = make(~width="120px", ())
   let startConversationIcon = make(~marginLeft="20px", ())
-  let joinConversationParent = make(~perspective="1000px", ~width="200px", ~height="200px", ())
+  let joinConversationParent = make(~perspective="1000px", ~width="250px", ~height="250px", ())
   let joinConversationWrapper = make(
     ~position="relative",
     ~width="100%",
@@ -79,19 +79,20 @@ module Style = {
     ~width="100%",
     ~textAlign="center",
     ~background="transparent",
-    ~fontSize="26px",
+    ~fontSize="18px",
     ~borderBottom="2px solid #3a7bd5",
     ~color="black",
     ~opacity="0.70",
-    ~marginTop="5px",
+    ~marginTop="15px",
+    ~marginBottom="15px",
     (),
   )
   let active = make(~transform="rotateY(180deg)", ())
   let enterBtn = make(
     ~borderRadius="50%",
     ~background="linear-gradient(0deg, #00d2ff, #3a7bd5)",
-    ~height="35px",
-    ~width="35px",
+    ~height="40px",
+    ~width="40px",
     ~marginTop="10px",
     ~cursor="none",
     ~transition="0.2s ease-out all",
