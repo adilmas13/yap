@@ -31,8 +31,32 @@ var leftParent = {
 
 var description = {
   color: "white",
-  fontSize: "40px",
-  fontWeight: "600"
+  fontSize: "40px"
+};
+
+var chatDescWrapper = {
+  color: "white",
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  justifyContent: "center"
+};
+
+var chatDesc = {
+  color: "white",
+  fontSize: "30px",
+  padding: "0 5px"
+};
+
+var chatDescSecondary = {
+  fontSize: "18px",
+  padding: "10px 5px",
+  textAlign: "center"
+};
+
+var orText = {
+  fontSize: "30px",
+  margin: "30px 0"
 };
 
 var logoWrapper = {
@@ -58,17 +82,53 @@ var Style = {
   parent: parent,
   leftParent: leftParent,
   description: description,
+  chatDescWrapper: chatDescWrapper,
+  chatDesc: chatDesc,
+  chatDescSecondary: chatDescSecondary,
+  orText: orText,
   logoWrapper: logoWrapper,
   logoText: logoText,
   bodyWrapper: bodyWrapper
 };
 
 function App$LeftSection(Props) {
+  var body = Props.body;
+  var tmp;
+  if (typeof body === "number") {
+    switch (body) {
+      case /* Profile */0 :
+          tmp = React.createElement("div", {
+                style: description
+              }, Ru$Yap.s("let's talk"));
+          break;
+      case /* Home */1 :
+          tmp = React.createElement("div", {
+                style: description
+              }, Ru$Yap.s("home"));
+          break;
+      case /* PageNotFound */2 :
+          tmp = React.createElement(React.Fragment, undefined);
+          break;
+      
+    }
+  } else {
+    tmp = React.createElement("div", {
+          style: chatDescWrapper
+        }, React.createElement("div", {
+              style: chatDesc
+            }, Ru$Yap.s("share link with others")), React.createElement("div", {
+              style: chatDescSecondary
+            }, Ru$Yap.s(window.location.href)), React.createElement("div", {
+              style: orText
+            }, Ru$Yap.s("- or -")), React.createElement("div", {
+              style: chatDesc
+            }, Ru$Yap.s("tell them to join with id")), React.createElement("div", {
+              style: chatDescSecondary
+            }, Ru$Yap.s(body._0)));
+  }
   return React.createElement("div", {
               style: leftParent
-            }, React.createElement("div", {
-                  style: description
-                }, Ru$Yap.s("let's talk")), React.createElement("div", {
+            }, tmp, React.createElement("div", {
                   style: logoWrapper
                 }, React.createElement("img", {
                       src: AssetLoader$Yap.logo,
@@ -107,46 +167,56 @@ function App(Props) {
   var match$2 = url.path;
   var body;
   if (match$1) {
-    var exit = 0;
     if (match$2) {
       switch (match$2.hd) {
         case "chat" :
-            if (match$2.tl) {
-              exit = 1;
-            } else {
-              body = pendingRoute ? React.createElement(Chat$Yap.make, {
-                      id: pendingRoute._0
-                    }) : React.createElement(Home$Yap.make, {});
-            }
+            body = match$2.tl ? /* PageNotFound */2 : (
+                pendingRoute ? /* Chat */({
+                      _0: pendingRoute._0
+                    }) : /* Home */1
+              );
             break;
         case "home" :
         case "profile" :
-            if (match$2.tl) {
-              exit = 1;
-            } else {
-              body = React.createElement(Home$Yap.make, {});
-            }
+            body = match$2.tl ? /* PageNotFound */2 : /* Home */1;
             break;
         default:
-          exit = 1;
+          body = /* PageNotFound */2;
       }
     } else {
-      body = React.createElement(Home$Yap.make, {});
+      body = /* Home */1;
     }
-    if (exit === 1) {
-      body = React.createElement(PageNotFound$Yap.make, {});
-    }
-    
   } else {
-    body = React.createElement(Profile$Yap.make, {
-          onSubmit: onSubmit
+    body = /* Profile */0;
+  }
+  var tmp;
+  if (typeof body === "number") {
+    switch (body) {
+      case /* Profile */0 :
+          tmp = React.createElement(Profile$Yap.make, {
+                onSubmit: onSubmit
+              });
+          break;
+      case /* Home */1 :
+          tmp = React.createElement(Home$Yap.make, {});
+          break;
+      case /* PageNotFound */2 :
+          tmp = React.createElement(PageNotFound$Yap.make, {});
+          break;
+      
+    }
+  } else {
+    tmp = React.createElement(Chat$Yap.make, {
+          id: body._0
         });
   }
   return React.createElement("div", {
               style: parent
-            }, React.createElement(App$LeftSection, {}), React.createElement("div", {
+            }, React.createElement(App$LeftSection, {
+                  body: body
+                }), React.createElement("div", {
                   style: bodyWrapper
-                }, body));
+                }, tmp));
 }
 
 var make = App;

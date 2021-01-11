@@ -1,3 +1,6 @@
+@bs.val @bs.scope(("window", "location"))
+external location: string = "href"
+
 module Style = {
   open ReactDOMRe.Style
   let parent = make(~display="flex", ~alignItems="center", ~height="100vh", ~padding="0 10px", ())
@@ -13,7 +16,18 @@ module Style = {
     ~position="relative",
     (),
   )
-  let description = make(~fontSize="40px", ~color="white", ~fontWeight="600", ())
+  let description = make(~fontSize="40px", ~color="white", ())
+  let chatDescWrapper = make(
+    ~color="white",
+    ~display="flex",
+    ~flexDirection="column",
+    ~alignItems="center",
+    ~justifyContent="center",
+    (),
+  )
+  let chatDesc = make(~fontSize="30px", ~color="white", ~padding="0 5px", ())
+  let chatDescSecondary = make(~fontSize="18px", ~textAlign="center", ~padding="10px 5px", ())
+  let orText = make(~margin="30px 0", ~fontSize="30px", ())
 
   let logoWrapper = make(
     ~display="flex",
@@ -29,12 +43,25 @@ module Style = {
   let bodyWrapper = make(~flex="1", ())
 }
 
+type screen = Profile | Home | Chat(string) | PageNotFound
 module LeftSection = {
   @react.component
-  let make = () => {
+  let make = (~body) => {
     open Style
     <div style={leftParent}>
-      <div style={description}> {"let's talk"->Ru.s} </div>
+      {switch body {
+      | Profile => <div style={description}> {"let's talk"->Ru.s} </div>
+      | Home => <div style={description}> {"home"->Ru.s} </div>
+      | Chat(id) =>
+        <div style={chatDescWrapper}>
+          <div style={chatDesc}> {"share link with others"->Ru.s} </div>
+          <div style={chatDescSecondary}> {location->Ru.s} </div>
+          <div style={orText}> {"- or -"->Ru.s} </div>
+          <div style={chatDesc}> {"tell them to join with id"->Ru.s} </div>
+          <div style={chatDescSecondary}> {id->Ru.s} </div>
+        </div>
+      | PageNotFound => <> </>
+      }}
       <div style={logoWrapper}>
         <img src={AssetLoader.logo} width="50px" /> <div style={logoText}> {"yap !!"->Ru.s} </div>
       </div>
@@ -67,23 +94,34 @@ let make = () => {
 
   let onSubmit = () => {
     switch pendingRoute {
-    | Home => ReasonReactRouter.push("/home")
-    | Chat(id) => ReasonReactRouter.push("/chat?id=" ++ id)
+    | Home => "/home"->ReasonReactRouter.push
+    | Chat(id) => ("/chat?id=" ++ id)->ReasonReactRouter.push
     }
   }
 
   let body = switch (UserDetails.isLoggedIn(), url.path, pendingRoute) {
-  | (false, _, _) => <Profile onSubmit />
+  | (false, _, _) => Profile
   | (true, list{}, _)
-  | (true, list{"profile"}, _) =>
-    <Home />
-  | (true, list{"home"}, _) => <Home />
-  | (true, list{"chat"}, Home) => <Home />
-  | (true, list{"chat"}, Chat(id)) => <Chat id />
-  | (true, _, _) => <PageNotFound />
-  | _ => <PageNotFound />
+  | (true, list{"profile"}, _)
+  | (true, list{"home"}, _)
+  | (true, list{"chat"}, Home) =>
+    Home
+  | (true, list{"chat"}, Chat(id)) => Chat(id)
+  | (true, _, _)
+  | _ =>
+    PageNotFound
   }
 
   open Style
-  <div style={parent}> <LeftSection /> <div style={bodyWrapper}> {body} </div> </div>
+  <div style={parent}>
+    <LeftSection body />
+    <div style={bodyWrapper}>
+      {switch body {
+      | Profile => <Profile onSubmit />
+      | Home => <Home />
+      | Chat(id) => <Chat id />
+      | PageNotFound => <PageNotFound />
+      }}
+    </div>
+  </div>
 }

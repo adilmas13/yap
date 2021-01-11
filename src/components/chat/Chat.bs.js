@@ -403,7 +403,7 @@ var NotValidChatRoom = {
 function Chat$LoadingChat(Props) {
   return React.createElement("div", {
               style: Object.assign({}, notValidAndLoadingChatRoomParent, loadingText)
-            }, Ru$Yap.s("Getting Ready !!"));
+            }, Ru$Yap.s("getting ready !!"));
 }
 
 var LoadingChat = {

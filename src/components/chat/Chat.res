@@ -314,7 +314,7 @@ module LoadingChat = {
   let make = () => {
     open Style
     <div style={ReactDOM.Style.combine(notValidAndLoadingChatRoomParent, loadingText)}>
-      {"Getting Ready !!"->Ru.s}
+      {"getting ready !!"->Ru.s}
     </div>
   }
 }
