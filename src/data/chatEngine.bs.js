@@ -30,12 +30,6 @@ var MessageRequest = {
   make: make
 };
 
-function test(param) {
-  return new Rxjs.Observable((function (subscriber) {
-                
-              }));
-}
-
 function sendMessage(message, doc) {
   var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).add(make(message));
   var __x$1 = __x.then(function (param) {
@@ -73,10 +67,24 @@ function getLatestMessages(doc) {
               }));
 }
 
+function createChatRoom(param) {
+  return new Rxjs.Observable((function (subscriber) {
+                var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).add({
+                      createdAt: Date.now()
+                    });
+                __x.then(function (docRef) {
+                      subscriber.next(docRef.id);
+                      subscriber.complete();
+                      return Promise.resolve(undefined);
+                    });
+                
+              }));
+}
+
 exports.Constants = Constants;
 exports.MessageRequest = MessageRequest;
-exports.test = test;
 exports.sendMessage = sendMessage;
 exports.listen = listen;
 exports.getLatestMessages = getLatestMessages;
+exports.createChatRoom = createChatRoom;
 /*  Not a pure module */

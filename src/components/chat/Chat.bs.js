@@ -272,8 +272,12 @@ function reducer(state, action) {
             messages: chatUiMessages
           };
   }
+  var msg = Belt_Array.get(action._0, 0);
+  if (msg === undefined) {
+    return state;
+  }
   var lastMessage = Belt_Array.get(state.messages, state.messages.length - 1 | 0);
-  var newMessage = make(action._0[0], lastMessage);
+  var newMessage = make(msg, lastMessage);
   var shouldAppend = lastMessage !== undefined ? newMessage.id !== lastMessage.id : true;
   if (shouldAppend) {
     return {

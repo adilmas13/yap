@@ -3,6 +3,7 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
+var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 
@@ -167,8 +168,18 @@ var Style = {
 };
 
 function Home$StartNewConvesation(Props) {
+  var createChatRoom = function (e) {
+    e.stopPropagation();
+    Ru$Yap.onNextError(ChatEngine$Yap.createChatRoom(undefined), (function (id) {
+            return ReasonReactRouter.push("/chat?id=" + id);
+          }), (function (param) {
+            
+          }));
+    
+  };
   return React.createElement("div", {
-              style: choice
+              style: choice,
+              onClick: createChatRoom
             }, React.createElement("img", {
                   style: Object.assign({}, choiceIcon, startConversationIcon),
                   src: AssetLoader$Yap.startChat

@@ -207,14 +207,19 @@ module Body = {
         })
         {...state, messages: chatUiMessages}
       }
-    | NewMessage(messages) => {
-        let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
-        let newMessage = messages->Belt.Array.getUnsafe(0)->ChatUiData.make(lastMessage)
-        let shouldAppend = switch lastMessage {
-        | None => true
-        | Some(msg) => newMessage->ChatUiData.id !== msg->ChatUiData.id
+    | NewMessage(messages) => switch messages->Belt.Array.get(0) {
+      | Some(msg) => {
+          let lastMessage = state.messages->Belt.Array.get(state.messages->Belt.Array.length - 1)
+          let newMessage = msg->ChatUiData.make(lastMessage)
+          let shouldAppend = switch lastMessage {
+          | None => true
+          | Some(msg) => newMessage->ChatUiData.id !== msg->ChatUiData.id
+          }
+          shouldAppend
+            ? {...state, messages: state.messages->Belt.Array.concat([newMessage])}
+            : state
         }
-        shouldAppend ? {...state, messages: state.messages->Belt.Array.concat([newMessage])} : state
+      | None => state
       }
     }
   }

@@ -26,17 +26,6 @@ module MessageRequest = {
   }
 }
 
-let test = () => {
-  Rx.Observable.create(
-    ~subscribe=#NoTeardown(
-      (subscriber: Rx.Subscriber.t<unit>) => {
-        ()
-      },
-    ),
-    (),
-  )
-}
-
 let sendMessage = (message: string, doc: string) => {
   firebase
   ->firestore
@@ -100,3 +89,40 @@ let getLatestMessages = (doc: string) => {
     (),
   )
 }
+
+type test = {createdAt: float}
+let createChatRoom = () => {
+  Rx.Observable.create(
+    ~subscribe=#NoTeardown(
+      (subscriber: Rx.Subscriber.t<string>) => {
+        firebase
+        ->firestore
+        ->Firestore.collection(Constants.chatRoom)
+        ->Firestore.add({
+          createdAt: Js.Date.now(),
+        })
+        ->Js.Promise.then_((docRef: Firebase.Firestore.DocRef.t) => {
+          subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocRef.id, _)
+          subscriber->Rx.Subscriber.complete
+          Js.Promise.resolve()
+        }, _)
+        ->ignore
+      },
+    ),
+    (),
+  )
+}
+
+/*
+ firebase
+            ->firestore
+            ->Firestore.collection(Constants.chatRoom)
+            ->Firestore.add({
+                createdAt: Js.Date.now()
+            })->Js.Promise.then_((docRef:Firebase.Firestore.DocRef.t) => {
+                subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocRef.id)
+                subscriber->Rx.Subscriber.complete
+                Js.Promise.resolve()
+            },_)
+
+*/

@@ -108,7 +108,14 @@ module StartNewConvesation = {
   open Style
   @react.component
   let make = () => {
-    <div style={choice}>
+    let createChatRoom = (e: ReactEvent.Mouse.t) => {
+      e->ReactEvent.Mouse.stopPropagation
+      ChatEngine.createChatRoom()
+      ->Ru.onNextError(~next=id => ("/chat?id=" ++ id)->ReasonReactRouter.push, ~error=_ => ())
+      ->ignore
+    }
+
+    <div style={choice} onClick=createChatRoom>
       <img
         style={ReactDOMRe.Style.combine(choiceIcon, startConversationIcon)}
         src={AssetLoader.startChat}
