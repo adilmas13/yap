@@ -164,7 +164,7 @@ module JoinConvesation = {
     let redirect = () => {
       let sanitizedId = id->Js.String2.trim
       if sanitizedId->Js.String2.length > 3 {
-        j`/chat?id=${sanitizedId}`->ReasonReactRouter.push
+        ("/chat?id=" ++ sanitizedId)->ReasonReactRouter.push
       }
     }
 

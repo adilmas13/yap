@@ -20,7 +20,7 @@ var FirebaseConfig = {
   make: make
 };
 
-var DocRef = {};
+var DocumentReference = {};
 
 var Query = {};
 
@@ -43,7 +43,7 @@ var QuerySnapshot = {
 };
 
 var Firestore = {
-  DocRef: DocRef,
+  DocumentReference: DocumentReference,
   Query: Query,
   DocumentSnapshot: DocumentSnapshot,
   QuerySnapshot: QuerySnapshot

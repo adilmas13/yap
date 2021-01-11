@@ -33,7 +33,7 @@ module FirebaseConfig = {
 }
 
 module Firestore = {
-  module DocRef = {
+  module DocumentReference = {
     type t
     @bs.get external exists: t => bool = "exists"
     @bs.get external id: t => string = "id"
@@ -48,6 +48,7 @@ module Firestore = {
     type t
     @bs.send external data: (t, unit) => 'a = "data"
     @bs.get external id: t => 'a = "id"
+    @bs.get external exists: t => bool = "exists"
   }
 
   module QuerySnapshot = {
@@ -70,15 +71,16 @@ module Firestore = {
 
   @bs.module external require: unit = "firebase/firestore"
   @bs.send external collection: (t, string) => collection = "collection"
-  @bs.send external collection1: (DocRef.t, string) => collection = "collection"
-  @bs.send external add: (collection, 'a) => Js.Promise.t<DocRef.t> = "add"
-  @bs.send external set: (DocRef.t, 'a) => Js.Promise.t<unit> = "set"
-  @bs.send external doc: (collection, string) => DocRef.t = "doc"
+  @bs.send external collection1: (DocumentReference.t, string) => collection = "collection"
+  @bs.send external add: (collection, 'a) => Js.Promise.t<DocumentReference.t> = "add"
+  @bs.send external set: (DocumentReference.t, 'a) => Js.Promise.t<unit> = "set"
+  @bs.send external doc: (collection, string) => DocumentReference.t = "doc"
   @bs.send external orderBy: (collection, string, string) => Query.t = "orderBy"
   @bs.send external limit: (Query.t, int) => Query.t = "limit"
-  @bs.send external onSnapshot: (DocRef.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
+  @bs.send external onSnapshot: (DocumentReference.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
   @bs.send external onSnapshot1: (Query.t, QuerySnapshot.t => unit) => snapshotReturn = "onSnapshot"
   @bs.send external get: Query.t => Js.Promise.t<QuerySnapshot.t> = "get"
+  @bs.send external get1: DocumentReference.t => Js.Promise.t<DocumentSnapshot.t> = "get"
 }
 
 @bs.module external _firebase: obj = "firebase/app"

@@ -16,3 +16,6 @@ external startChat : string = "default";
 
 @bs.module("../assets/send.svg")
 external send : string = "default";
+
+@bs.module("../assets/caution.svg")
+external caution : string = "default";

@@ -26,6 +26,16 @@ module MessageRequest = {
   }
 }
 
+module ChatRoomData = {
+  type t = {createdAt: float}
+
+  let makeDefault = () => {
+    {
+      createdAt: Js.Date.now(),
+    }
+  }
+}
+
 let sendMessage = (message: string, doc: string) => {
   firebase
   ->firestore
@@ -90,7 +100,6 @@ let getLatestMessages = (doc: string) => {
   )
 }
 
-type test = {createdAt: float}
 let createChatRoom = () => {
   Rx.Observable.create(
     ~subscribe=#NoTeardown(
@@ -98,11 +107,9 @@ let createChatRoom = () => {
         firebase
         ->firestore
         ->Firestore.collection(Constants.chatRoom)
-        ->Firestore.add({
-          createdAt: Js.Date.now(),
-        })
-        ->Js.Promise.then_((docRef: Firebase.Firestore.DocRef.t) => {
-          subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocRef.id, _)
+        ->Firestore.add(ChatRoomData.makeDefault())
+        ->Js.Promise.then_((docRef: Firebase.Firestore.DocumentReference.t) => {
+          subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocumentReference.id, _)
           subscriber->Rx.Subscriber.complete
           Js.Promise.resolve()
         }, _)
@@ -113,16 +120,23 @@ let createChatRoom = () => {
   )
 }
 
-/*
- firebase
-            ->firestore
-            ->Firestore.collection(Constants.chatRoom)
-            ->Firestore.add({
-                createdAt: Js.Date.now()
-            })->Js.Promise.then_((docRef:Firebase.Firestore.DocRef.t) => {
-                subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocRef.id)
-                subscriber->Rx.Subscriber.complete
-                Js.Promise.resolve()
-            },_)
-
-*/
+let isChatRoomExisting = (doc: string) => {
+  Rx.Observable.create(
+    ~subscribe=#NoTeardown(
+      (subscriber: Rx.Subscriber.t<bool>) => {
+        firebase
+        ->firestore
+        ->Firestore.collection(Constants.chatRoom)
+        ->Firestore.doc(doc)
+        ->Firestore.get1
+        ->Js.Promise.then_((docRef: Firebase.Firestore.DocumentSnapshot.t) => {
+          subscriber->Rx.Subscriber.next(docRef->Firebase.Firestore.DocumentSnapshot.exists, _)
+          subscriber->Rx.Subscriber.complete
+          Js.Promise.resolve()
+        }, _)
+        ->ignore
+      },
+    ),
+    (),
+  )
+}

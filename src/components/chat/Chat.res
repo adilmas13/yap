@@ -1,6 +1,13 @@
 module Style = {
   open ReactDOMRe.Style
-  let parent = make(~display="flex", ~flexDirection="column", ~height="100vh", ~padding="10px", ())
+  let parent = make(
+    ~display="flex",
+    ~flexDirection="column",
+    ~height="100vh",
+    ~padding="10px",
+    ~position="relative",
+    (),
+  )
   let bodyParent = make(~display="flex", ~flexDirection="column", ~flex="1", ~overflow="scroll", ())
 
   module ChatInputStyle = {
@@ -74,6 +81,24 @@ module Style = {
       (),
     )
   }
+
+  let notValidAndLoadingChatRoomParent = make(
+    ~background="rgba(255, 255, 255, 0.8)",
+    ~position="absolute",
+    ~top="0",
+    ~bottom="0",
+    ~right="0",
+    ~left="0",
+    ~display="flex",
+    ~alignItems="center",
+    ~justifyContent="center",
+    ~flexDirection="column",
+    (),
+  )
+
+  let invalidIcon = make(~width="200px", ())
+  let invalidText = make(~fontSize="34px", ~marginTop="16px", ())
+  let loadingText = make(~fontSize="50px", ())
 }
 
 module ChatUiData = {
@@ -227,7 +252,7 @@ module Body = {
 
   open Style
   @react.component
-  let make = (~id: string) => {
+  let make = (~id: string, ~onChatReady = () => ()) => {
     let scrollerRef = React.useRef(Js.Nullable.null)
     let (state, dispatch) = React.useReducer(reducer, defaultState)
 
@@ -249,6 +274,7 @@ module Body = {
           ~next=messages => {
             messages->NewMessage->dispatch
             scrollToBottom()
+            onChatReady()
           },
           ~error=_ => (),
           _,
@@ -272,8 +298,51 @@ module Body = {
   }
 }
 
+module NotValidChatRoom = {
+  open Style
+  @react.component
+  let make = () => {
+    <div style={notValidAndLoadingChatRoomParent}>
+      <img src={AssetLoader.caution} style={invalidIcon} />
+      <div style={invalidText}> {"Chat room doesn't exist"->Ru.s} </div>
+    </div>
+  }
+}
+
+module LoadingChat = {
+  @react.component
+  let make = () => {
+    open Style
+    <div style={ReactDOM.Style.combine(notValidAndLoadingChatRoomParent, loadingText)}>
+      {"Getting Ready !!"->Ru.s}
+    </div>
+  }
+}
+
+type state = InitialLoad | ChatLoading | Invalid | Ready
+
 @react.component
 let make = (~id: string) => {
+  let (state, setState) = React.useState(() => InitialLoad)
+
+  React.useEffect1(() => {
+    id
+    ->ChatEngine.isChatRoomExisting
+    ->Ru.onNextError(
+      ~next=isExisting => setState(_ => isExisting ? ChatLoading : Invalid),
+      ~error=_ => (),
+    )
+    ->ignore
+    None
+  }, [])
+  let onChatReady = () => setState(_=>Ready)
   open Style
-  <div style={parent}> <Body id /> <ChatInput id /> </div>
+  <div style={parent}>
+    {switch state {
+    | InitialLoad => <LoadingChat />
+    | ChatLoading => <> <Body id onChatReady /> <ChatInput id /> <LoadingChat /> </>
+    | Ready => <> <Body id /> <ChatInput id /> </>
+    | Invalid => <NotValidChatRoom />
+    }}
+  </div>
 }

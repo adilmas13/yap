@@ -15,6 +15,7 @@ var parent = {
   display: "flex",
   height: "100vh",
   padding: "10px",
+  position: "relative",
   flexDirection: "column"
 };
 
@@ -121,11 +122,41 @@ var ChatBubbleStyle = {
   userImage: userImage
 };
 
+var notValidAndLoadingChatRoomParent = {
+  background: "rgba(255, 255, 255, 0.8)",
+  bottom: "0",
+  display: "flex",
+  left: "0",
+  position: "absolute",
+  right: "0",
+  top: "0",
+  alignItems: "center",
+  flexDirection: "column",
+  justifyContent: "center"
+};
+
+var invalidIcon = {
+  width: "200px"
+};
+
+var invalidText = {
+  fontSize: "34px",
+  marginTop: "16px"
+};
+
+var loadingText = {
+  fontSize: "50px"
+};
+
 var Style = {
   parent: parent,
   bodyParent: bodyParent,
   ChatInputStyle: ChatInputStyle,
-  ChatBubbleStyle: ChatBubbleStyle
+  ChatBubbleStyle: ChatBubbleStyle,
+  notValidAndLoadingChatRoomParent: notValidAndLoadingChatRoomParent,
+  invalidIcon: invalidIcon,
+  invalidText: invalidText,
+  loadingText: loadingText
 };
 
 function id(t) {
@@ -290,9 +321,20 @@ function reducer(state, action) {
 
 function Chat$Body(Props) {
   var id = Props.id;
+  var onChatReadyOpt = Props.onChatReady;
+  var onChatReady = onChatReadyOpt !== undefined ? onChatReadyOpt : (function (param) {
+        
+      });
   var scrollerRef = React.useRef(null);
   var match = React.useReducer(reducer, defaultState);
   var dispatch = match[1];
+  var scrollToBottom = function (param) {
+    var element = scrollerRef.current;
+    var element$1 = (element == null) ? undefined : Caml_option.some(element);
+    var scrollHeight = element$1.scrollHeight;
+    element$1.scrollTop = scrollHeight;
+    
+  };
   React.useEffect((function () {
           var __x = Ru$Yap.tapNext(ChatEngine$Yap.getLatestMessages(id), (function (messages) {
                   return Curry._1(dispatch, {
@@ -308,11 +350,8 @@ function Chat$Body(Props) {
                         TAG: /* NewMessage */1,
                         _0: messages
                       });
-                  var element = scrollerRef.current;
-                  var element$1 = (element == null) ? undefined : Caml_option.some(element);
-                  var scrollHeight = element$1.scrollHeight;
-                  element$1.scrollTop = scrollHeight;
-                  
+                  scrollToBottom(undefined);
+                  return Curry._1(onChatReady, undefined);
                 }), (function (param) {
                   
                 }));
@@ -346,15 +385,84 @@ var Body = {
   make: Chat$Body
 };
 
+function Chat$NotValidChatRoom(Props) {
+  return React.createElement("div", {
+              style: notValidAndLoadingChatRoomParent
+            }, React.createElement("img", {
+                  style: invalidIcon,
+                  src: AssetLoader$Yap.caution
+                }), React.createElement("div", {
+                  style: invalidText
+                }, Ru$Yap.s("Chat room doesn't exist")));
+}
+
+var NotValidChatRoom = {
+  make: Chat$NotValidChatRoom
+};
+
+function Chat$LoadingChat(Props) {
+  return React.createElement("div", {
+              style: Object.assign({}, notValidAndLoadingChatRoomParent, loadingText)
+            }, Ru$Yap.s("Getting Ready !!"));
+}
+
+var LoadingChat = {
+  make: Chat$LoadingChat
+};
+
 function Chat(Props) {
   var id = Props.id;
-  return React.createElement("div", {
-              style: parent
-            }, React.createElement(Chat$Body, {
+  var match = React.useState(function () {
+        return /* InitialLoad */0;
+      });
+  var setState = match[1];
+  React.useEffect((function () {
+          Ru$Yap.onNextError(ChatEngine$Yap.isChatRoomExisting(id), (function (isExisting) {
+                  return Curry._1(setState, (function (param) {
+                                if (isExisting) {
+                                  return /* ChatLoading */1;
+                                } else {
+                                  return /* Invalid */2;
+                                }
+                              }));
+                }), (function (param) {
+                  
+                }));
+          
+        }), []);
+  var onChatReady = function (param) {
+    return Curry._1(setState, (function (param) {
+                  return /* Ready */3;
+                }));
+  };
+  var tmp;
+  switch (match[0]) {
+    case /* InitialLoad */0 :
+        tmp = React.createElement(Chat$LoadingChat, {});
+        break;
+    case /* ChatLoading */1 :
+        tmp = React.createElement(React.Fragment, undefined, React.createElement(Chat$Body, {
+                  id: id,
+                  onChatReady: onChatReady
+                }), React.createElement(Chat$ChatInput, {
+                  id: id
+                }), React.createElement(Chat$LoadingChat, {}));
+        break;
+    case /* Invalid */2 :
+        tmp = React.createElement(Chat$NotValidChatRoom, {});
+        break;
+    case /* Ready */3 :
+        tmp = React.createElement(React.Fragment, undefined, React.createElement(Chat$Body, {
                   id: id
                 }), React.createElement(Chat$ChatInput, {
                   id: id
                 }));
+        break;
+    
+  }
+  return React.createElement("div", {
+              style: parent
+            }, tmp);
 }
 
 var make$1 = Chat;
@@ -365,5 +473,7 @@ exports.ChatInput = ChatInput;
 exports.MyChatBubble = MyChatBubble;
 exports.OtherChatBubble = OtherChatBubble;
 exports.Body = Body;
+exports.NotValidChatRoom = NotValidChatRoom;
+exports.LoadingChat = LoadingChat;
 exports.make = make$1;
 /* react Not a pure module */

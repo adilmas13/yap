@@ -30,6 +30,16 @@ var MessageRequest = {
   make: make
 };
 
+function makeDefault(param) {
+  return {
+          createdAt: Date.now()
+        };
+}
+
+var ChatRoomData = {
+  makeDefault: makeDefault
+};
+
 function sendMessage(message, doc) {
   var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).collection(messages).add(make(message));
   var __x$1 = __x.then(function (param) {
@@ -81,10 +91,24 @@ function createChatRoom(param) {
               }));
 }
 
+function isChatRoomExisting(doc) {
+  return new Rxjs.Observable((function (subscriber) {
+                var __x = Firebase$Yap.firebase.firestore().collection(chatRoom).doc(doc).get();
+                __x.then(function (docRef) {
+                      subscriber.next(docRef.exists);
+                      subscriber.complete();
+                      return Promise.resolve(undefined);
+                    });
+                
+              }));
+}
+
 exports.Constants = Constants;
 exports.MessageRequest = MessageRequest;
+exports.ChatRoomData = ChatRoomData;
 exports.sendMessage = sendMessage;
 exports.listen = listen;
 exports.getLatestMessages = getLatestMessages;
 exports.createChatRoom = createChatRoom;
+exports.isChatRoomExisting = isChatRoomExisting;
 /*  Not a pure module */
