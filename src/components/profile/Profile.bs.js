@@ -4,6 +4,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
+var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
 var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var AvatarCollection$Yap = require("../../data/avatarCollection.bs.js");
@@ -200,12 +201,14 @@ function Profile(Props) {
       });
   var setTitle = match[1];
   var match$1 = React.useState(function () {
-        return "";
+        return UserDetails$Yap.username(undefined);
       });
   var setName = match$1[1];
   var name = match$1[0];
   var match$2 = React.useState(function () {
-        return -1;
+        return Belt_Option.getWithDefault(Belt_Array.getIndexBy(AvatarCollection$Yap.avatars, (function (it) {
+                          return it === UserDetails$Yap.avatar(undefined);
+                        })), -1);
       });
   var selectedAvatar = match$2[0];
   var match$3 = React.useState(function () {
@@ -268,6 +271,7 @@ function Profile(Props) {
                           style: input,
                           placeholder: "john doe",
                           type: "text",
+                          value: name,
                           onChange: onChange
                         }), React.createElement("div", {
                           style: lineStyle

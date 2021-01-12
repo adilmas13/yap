@@ -135,8 +135,12 @@ module Avatar = {
 @react.component
 let make = (~onSubmit: unit => unit) => {
   let (title, setTitle) = React.useState(() => "")
-  let (name, setName) = React.useState(() => "")
-  let (selectedAvatar, selectAvatar) = React.useState(() => -1)
+  let (name, setName) = React.useState(() => UserDetails.username())
+  let (selectedAvatar, selectAvatar) = React.useState(() =>
+    AvatarCollection.avatars
+    ->Belt.Array.getIndexBy(it => it == UserDetails.avatar())
+    ->Belt.Option.getWithDefault(-1)
+  )
   let (isInputVisible, setInputVisible) = React.useState(() => false)
 
   React.useEffect1(() => {
@@ -208,7 +212,7 @@ let make = (~onSubmit: unit => unit) => {
     <div style={centerWrapper}>
       <div style={text1}> {title->Ru.s} </div>
       <div style={inputWrapperStyle}>
-        <input style={input} type_="text" placeholder="john doe" onChange />
+        <input style={input} type_="text" placeholder="john doe" value={name} onChange />
         <div style={lineStyle} />
       </div>
     </div>
