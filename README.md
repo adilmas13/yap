@@ -1,8 +1,8 @@
 # yap
 
-A simple open chat app written using ReScript with firestore.
+A simple open chat app written using `ReScript` with `firestore`
 
-## what will you see here
+## What will you see here
 - Creating modules
 - Creating sub modules
 - Creating Data objects using module
@@ -10,6 +10,19 @@ A simple open chat app written using ReScript with firestore.
 - Using ReasonReactRouter for redirection
 - Using static assets
 - Handling clicks and input events
+- Using Rx
+- Parsing Data using bs-json
+
+## Pages
+- Profile
+- Home
+- Chat
+
+## Dependencies
+- bs-rx
+- bs-json 
+- bs-webapi
+- firebase
 
 ## Run
 ```sh
