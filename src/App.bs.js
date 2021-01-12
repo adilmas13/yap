@@ -75,6 +75,7 @@ var logoText = {
 };
 
 var bodyWrapper = {
+  height: "100%",
   flex: "1"
 };
 
@@ -166,28 +167,35 @@ function App(Props) {
   var match$1 = UserDetails$Yap.isLoggedIn(undefined);
   var match$2 = url.path;
   var body;
-  if (match$1) {
-    if (match$2) {
-      switch (match$2.hd) {
-        case "chat" :
-            body = match$2.tl ? /* PageNotFound */2 : (
-                pendingRoute ? /* Chat */({
-                      _0: pendingRoute._0
-                    }) : /* Home */1
-              );
-            break;
-        case "home" :
-        case "profile" :
-            body = match$2.tl ? /* PageNotFound */2 : /* Home */1;
-            break;
-        default:
-          body = /* PageNotFound */2;
+  var exit = 0;
+  if (match$2 && match$2.hd === "profile" && !match$2.tl) {
+    body = /* Profile */0;
+  } else {
+    exit = 1;
+  }
+  if (exit === 1) {
+    if (match$1) {
+      if (match$2) {
+        switch (match$2.hd) {
+          case "chat" :
+              body = match$2.tl ? /* PageNotFound */2 : (
+                  pendingRoute ? /* Chat */({
+                        _0: pendingRoute._0
+                      }) : /* Home */1
+                );
+              break;
+          case "home" :
+              body = match$2.tl ? /* PageNotFound */2 : /* Home */1;
+              break;
+          default:
+            body = /* PageNotFound */2;
+        }
+      } else {
+        body = /* Home */1;
       }
     } else {
-      body = /* Home */1;
+      body = /* PageNotFound */2;
     }
-  } else {
-    body = /* Profile */0;
   }
   var tmp;
   if (typeof body === "number") {

@@ -1,6 +1,7 @@
 module Style = {
   open ReactDOMRe.Style
   let parent = make(
+    ~position="relative",
     ~height="100%",
     ~width="100%",
     ~display="flex",
@@ -118,6 +119,29 @@ module Style = {
     (),
   )
   let enterBtnActive = make(~cursor="pointer", ~pointerEvents="all", ~opacity="1", ())
+  let profileWrapper = make(
+    ~display="flex",
+    ~position="absolute",
+    ~top="10px",
+    ~right="0",
+    ~cursor="pointer",
+    (),
+  )
+  let profileImg = make(
+    ~height="45px",
+    ~width="45px",
+    ~borderRadius="50%",
+    ~border="1px solid #ccc",
+    ~padding="2px",
+    (),
+  )
+  let profileName = make(
+    ~display="flex",
+    ~alignItems="center",
+    ~marginRight="15px",
+    ~fontSize="18px",
+    (),
+  )
 }
 
 module StartNewConvesation = {
@@ -232,6 +256,22 @@ module JoinConvesation = {
   }
 }
 
+module UserProfile = {
+  open Style
+  @react.component
+  let make = () => {
+    let redirectToProfile = (e: ReactEvent.Mouse.t) => {
+      e->ReactEvent.Mouse.stopPropagation
+      "/profile"->ReasonReactRouter.push
+    }
+
+    <div style={profileWrapper} onClick=redirectToProfile>
+      <div style={profileName}> {UserDetails.username()->Ru.s} </div>
+      <img src={UserDetails.avatar()} style={profileImg} />
+    </div>
+  }
+}
+
 @react.component
 let make = () => {
   open Style
@@ -240,5 +280,6 @@ let make = () => {
     <div style={optionWrapper}>
       <StartNewConvesation /> <div style={orText}> {"- or -"->Ru.s} </div> <JoinConvesation />
     </div>
+    <UserProfile />
   </div>
 }

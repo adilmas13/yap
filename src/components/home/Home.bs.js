@@ -5,11 +5,13 @@ var React = require("react");
 var Ru$Yap = require("../../utils/ru.bs.js");
 var ChatEngine$Yap = require("../../data/chatEngine.bs.js");
 var AssetLoader$Yap = require("../../utils/assetLoader.bs.js");
+var UserDetails$Yap = require("../../data/userDetails.bs.js");
 var ReasonReactRouter = require("reason-react/src/ReasonReactRouter.bs.js");
 
 var parent = {
   display: "flex",
   height: "100%",
+  position: "relative",
   width: "100%",
   alignItems: "center",
   flexDirection: "column",
@@ -165,6 +167,29 @@ var enterBtnActive = {
   pointerEvents: "all"
 };
 
+var profileWrapper = {
+  cursor: "pointer",
+  display: "flex",
+  position: "absolute",
+  right: "0",
+  top: "10px"
+};
+
+var profileImg = {
+  border: "1px solid #ccc",
+  height: "45px",
+  padding: "2px",
+  width: "45px",
+  borderRadius: "50%"
+};
+
+var profileName = {
+  display: "flex",
+  fontSize: "18px",
+  marginRight: "15px",
+  alignItems: "center"
+};
+
 var Style = {
   parent: parent,
   title: title,
@@ -185,7 +210,10 @@ var Style = {
   input: input,
   active: active,
   enterBtn: enterBtn,
-  enterBtnActive: enterBtnActive
+  enterBtnActive: enterBtnActive,
+  profileWrapper: profileWrapper,
+  profileImg: profileImg,
+  profileName: profileName
 };
 
 function Home$StartNewConvesation(Props) {
@@ -307,6 +335,26 @@ var JoinConvesation = {
   make: Home$JoinConvesation
 };
 
+function Home$UserProfile(Props) {
+  var redirectToProfile = function (e) {
+    e.stopPropagation();
+    return ReasonReactRouter.push("/profile");
+  };
+  return React.createElement("div", {
+              style: profileWrapper,
+              onClick: redirectToProfile
+            }, React.createElement("div", {
+                  style: profileName
+                }, Ru$Yap.s(UserDetails$Yap.username(undefined))), React.createElement("img", {
+                  style: profileImg,
+                  src: UserDetails$Yap.avatar(undefined)
+                }));
+}
+
+var UserProfile = {
+  make: Home$UserProfile
+};
+
 function Home(Props) {
   return React.createElement("div", {
               style: parent
@@ -316,7 +364,7 @@ function Home(Props) {
                   style: optionWrapper
                 }, React.createElement(Home$StartNewConvesation, {}), React.createElement("div", {
                       style: orText
-                    }, Ru$Yap.s("- or -")), React.createElement(Home$JoinConvesation, {})));
+                    }, Ru$Yap.s("- or -")), React.createElement(Home$JoinConvesation, {})), React.createElement(Home$UserProfile, {}));
 }
 
 var make = Home;
@@ -324,5 +372,6 @@ var make = Home;
 exports.Style = Style;
 exports.StartNewConvesation = StartNewConvesation;
 exports.JoinConvesation = JoinConvesation;
+exports.UserProfile = UserProfile;
 exports.make = make;
 /* react Not a pure module */

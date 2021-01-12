@@ -40,7 +40,7 @@ module Style = {
 
   let logoText = make(~color="#fff", ~fontSize="25px", ~marginLeft="10px", ~fontWeight="600", ())
 
-  let bodyWrapper = make(~flex="1", ())
+  let bodyWrapper = make(~flex="1", ~height="100%", ())
 }
 
 type screen = Profile | Home | Chat(string) | PageNotFound
@@ -100,9 +100,8 @@ let make = () => {
   }
 
   let body = switch (UserDetails.isLoggedIn(), url.path, pendingRoute) {
-  | (false, _, _) => Profile
+  | (_, list{"profile"}, _) => Profile
   | (true, list{}, _)
-  | (true, list{"profile"}, _)
   | (true, list{"home"}, _)
   | (true, list{"chat"}, Home) =>
     Home
