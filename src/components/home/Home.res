@@ -25,6 +25,21 @@ module Style = {
     ~position="relative",
     (),
   )
+  let choiceDisabled = make(~pointerEvents="none", ())
+  let creatingRoom = make(
+    ~display="flex",
+    ~alignItems="center",
+    ~justifyContent="center",
+    ~borderRadius="10px",
+    ~background="white",
+    ~position="absolute",
+    ~top="0",
+    ~bottom="0",
+    ~left="0",
+    ~right="0",
+    ~fontSize="25px",
+    (),
+  )
   let choiceTitle = make(
     ~width="100%",
     ~textAlign="center",
@@ -109,19 +124,33 @@ module StartNewConvesation = {
   open Style
   @react.component
   let make = () => {
+    let (isCreating, setCreating) = React.useState(() => false)
+
     let createChatRoom = (e: ReactEvent.Mouse.t) => {
+      setCreating(_ => true)
       e->ReactEvent.Mouse.stopPropagation
       ChatEngine.createChatRoom()
-      ->Ru.onNextError(~next=id => ("/chat?id=" ++ id)->ReasonReactRouter.push, ~error=_ => ())
+      ->Ru.onNextError(
+        ~next=id => ("/chat?id=" ++ id)->ReasonReactRouter.push,
+        ~error=_ => setCreating(_ => false),
+      )
       ->ignore
     }
 
-    <div style={choice} onClick=createChatRoom>
+    let choiceStyle = {
+      switch isCreating {
+      | true => ReactDOMRe.Style.combine(choice, choiceDisabled)
+      | false => choice
+      }
+    }
+
+    <div style={choiceStyle} onClick=createChatRoom>
       <img
         style={ReactDOMRe.Style.combine(choiceIcon, startConversationIcon)}
         src={AssetLoader.startChat}
       />
       <div style={choiceTitle}> {"start new conversation"->Ru.s} </div>
+      {isCreating ? <div style={creatingRoom}> {"setting up room.."->Ru.s} </div> : <> </>}
     </div>
   }
 }

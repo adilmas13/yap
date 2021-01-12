@@ -44,6 +44,24 @@ var choice = {
   justifyContent: "center"
 };
 
+var choiceDisabled = {
+  pointerEvents: "none"
+};
+
+var creatingRoom = {
+  background: "white",
+  bottom: "0",
+  display: "flex",
+  fontSize: "25px",
+  left: "0",
+  position: "absolute",
+  right: "0",
+  top: "0",
+  borderRadius: "10px",
+  alignItems: "center",
+  justifyContent: "center"
+};
+
 var choiceTitle = {
   fontSize: "1.1rem",
   fontWeight: "600",
@@ -153,6 +171,8 @@ var Style = {
   optionWrapper: optionWrapper,
   orText: orText,
   choice: choice,
+  choiceDisabled: choiceDisabled,
+  creatingRoom: creatingRoom,
   choiceTitle: choiceTitle,
   choiceIcon: choiceIcon,
   startConversationIcon: startConversationIcon,
@@ -169,24 +189,37 @@ var Style = {
 };
 
 function Home$StartNewConvesation(Props) {
+  var match = React.useState(function () {
+        return false;
+      });
+  var setCreating = match[1];
+  var isCreating = match[0];
   var createChatRoom = function (e) {
+    Curry._1(setCreating, (function (param) {
+            return true;
+          }));
     e.stopPropagation();
     Ru$Yap.onNextError(ChatEngine$Yap.createChatRoom(undefined), (function (id) {
             return ReasonReactRouter.push("/chat?id=" + id);
           }), (function (param) {
-            
+            return Curry._1(setCreating, (function (param) {
+                          return false;
+                        }));
           }));
     
   };
+  var choiceStyle = isCreating ? Object.assign({}, choice, choiceDisabled) : choice;
   return React.createElement("div", {
-              style: choice,
+              style: choiceStyle,
               onClick: createChatRoom
             }, React.createElement("img", {
                   style: Object.assign({}, choiceIcon, startConversationIcon),
                   src: AssetLoader$Yap.startChat
                 }), React.createElement("div", {
                   style: choiceTitle
-                }, Ru$Yap.s("start new conversation")));
+                }, Ru$Yap.s("start new conversation")), isCreating ? React.createElement("div", {
+                    style: creatingRoom
+                  }, Ru$Yap.s("setting up room..")) : React.createElement(React.Fragment, undefined));
 }
 
 var StartNewConvesation = {
