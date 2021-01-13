@@ -100,7 +100,9 @@ let make = () => {
   }
 
   let body = switch (UserDetails.isLoggedIn(), url.path, pendingRoute) {
-  | (_, list{"profile"}, _) => Profile
+  | (false, list{}, _)
+  | (_, list{"profile"}, _) =>
+    Profile
   | (true, list{}, _)
   | (true, list{"home"}, _)
   | (true, list{"chat"}, Home) =>
