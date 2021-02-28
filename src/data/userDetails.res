@@ -1,5 +1,4 @@
-@bs.scope("localStorage") @bs.val external getItem: string => Js.Nullable.t<string> = ""
-@bs.scope("localStorage") @bs.val external setItem: (string, string) => unit = ""
+open Dom.Storage2
 
 module Constants = {
   let username = "username"
@@ -7,23 +6,22 @@ module Constants = {
   let userId = "userId"
 }
 
-let saveUsername = (name: string) => Constants.username->setItem(name)
+let saveUsername = (name: string) => localStorage->setItem(Constants.username, name)
 
-let saveAvatar = (avatar: string) => Constants.avatar->setItem(avatar)
+let saveAvatar = (avatar: string) => localStorage->setItem(Constants.avatar, avatar)
 
 let saveUserId = (id: string) => {
-  switch Constants.userId->getItem->Js.Nullable.toOption {
-  | None => Constants.userId->setItem(id)
+  switch localStorage->getItem(Constants.userId) {
+  | None => localStorage->setItem(Constants.userId, id)
   | Some(_) => ()
   }
 }
 
-let isLoggedIn = () => Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.isSome
+let isLoggedIn = () => localStorage->getItem(Constants.userId)->Belt.Option.isSome
 
-let username = (~default: string = "", ()) =>
-  Constants.username->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault(default)
+let username = (~default: string="", ()) =>
+  localStorage->getItem(Constants.username)->Belt.Option.getWithDefault(default)
 
-let userId = () =>
-  Constants.userId->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("xxx")
+let userId = () => localStorage->getItem(Constants.userId)->Belt.Option.getWithDefault("xxx")
 
-let avatar = () => Constants.avatar->getItem->Js.Nullable.toOption->Belt.Option.getWithDefault("")
+let avatar = () => localStorage->getItem(Constants.avatar)->Belt.Option.getWithDefault("")
