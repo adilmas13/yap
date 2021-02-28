@@ -19,7 +19,7 @@ module MessageRequest = {
     {
       message: message,
       user_id: UserDetails.userId(),
-      username: UserDetails.username(),
+      username: UserDetails.username(~default="Anonymous User", ()),
       profile: UserDetails.avatar(),
       timestamp: Js.Date.now(),
     }
